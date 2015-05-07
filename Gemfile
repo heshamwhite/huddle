@@ -46,6 +46,19 @@ group :development, :test do
   #Additional Gems
   gem "twitter-bootstrap-rails"
 
+  gem "paperclip", "~> 4.2"
+
+  gem 'geocoder'
+
+  gem 'gmaps4rails'
+
+  gem "underscore-rails"
+
+  gem "kaminari"
+
+  gem "mysql2"
+
+  gem "mysql"
   ############################################
 end
 
