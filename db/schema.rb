@@ -133,6 +133,9 @@ ActiveRecord::Schema.define(version: 20150509121159) do
     t.string   "avatar_content_type", limit: 255
     t.integer  "avatar_file_size",    limit: 4
     t.datetime "avatar_updated_at"
+    t.string   "password_salt",       limit: 255
+    t.float    "latitude",            limit: 24
+    t.float    "longitude",           limit: 24
   end
 
   add_index "users", ["interest_id"], name: "index_users_on_interest_id", using: :btree
