@@ -16,9 +16,13 @@
     <%= f.text_field :username %>
   </div>
   <div class="field">
-    <%= f.label :hashedpassword %><br>
-    <%= f.text_field :hashedpassword %>
+    <%= f.label :password %><br>
+    <%= f.password_field :password %>
   </div>
+  <div class="field">
+    <%= f.label :password_confirmation %><br>
+   <%= f.password_field :password_confirmation %>
+   </div> 
   <div class="field">
     <%= f.label :age %><br>
     <%= f.number_field :age %>
@@ -29,19 +33,22 @@
   </div>
   <div class="field">
     <%= f.label :email %><br>
-    <%= f.text_field :email %>
+    <%= f.email_field :email %>
   </div>
   <div class="field">
-    <%= f.label :isconfirm %><br>
-    <%= f.number_field :isconfirm %>
+    <%= f.label :latitude %><br>
+    <%= f.text_field :latitude %>
   </div>
   <div class="field">
-    <%= f.label :usertype %><br>
-    <%= f.number_field :usertype %>
+    <%= f.label :longitude %><br>
+    <%= f.text_field :longitude %>
   </div>
   <div class="field">
-    <%= f.label :interest_id %><br>
-    <%= f.text_field :interest_id %>
+    <%= f.hidden_field :interest_id, :value => @user.id %>
+  </div>
+  <div class="field">
+    <%= f.label :interest %><br>
+    <%= f.text_field :interest %>
   </div>
     <div class="field">
       <%= f.file_field :avatar %>

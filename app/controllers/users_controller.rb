@@ -1,5 +1,11 @@
+ 
+
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
+    skip_before_action :require_login, only: [:new, :create]
+
+  before_action :set_user, :acess_deny, only: [:show, :edit, :update, :destroy]
+
+
 
   # GET /users
   # GET /users.json
@@ -10,6 +16,18 @@ class UsersController < ApplicationController
   # GET /users/1
   # GET /users/1.json
   def show
+    @a=[]
+       
+    interestsuser = Interests_User.where(user_id: @user.interest_id)
+   
+    interestsuser.each do|c|
+    @interest=Interest.find_by( id: c.interest_id)
+      @a.push(@interest.interestname)
+        logger.debug @a
+
+    end
+    
+
   end
 
   # GET /users/new
@@ -24,10 +42,24 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
+    # @user.interest_id=@user.id
+
     @user = User.new(user_params)
 
+   
     respond_to do |format|
       if @user.save
+        @user.update(interest_id: @user.id)
+        @user.interest.split(',').each do|c| 
+          if c.to_s.strip.length != 0
+        @interest=Interest.find_or_create_by(interestname: c)
+        # @interest=Interest.new(interestname: c)
+        # @interest.save
+
+        @interest_users= Interests_User.new(user_id:@user.id, interest_id:@interest.id)   
+        @interest_users.save
+        end
+         end 
         format.html { redirect_to @user, notice: 'User was successfully created.' }
         format.json { render :show, status: :created, location: @user }
       else
@@ -69,6 +101,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:username, :hashedpassword, :age, :bio, :email, :isconfirm, :usertype, :interest_id, :avatar)
+      params.require(:user).permit(:username, :hashedpassword, :password, :interest, :age, :bio, :email, :latitude, :longitude, :isconfirm, :usertype, :interest_id, :avatar)
     end
 end

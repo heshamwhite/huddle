@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150507142004) do
+ActiveRecord::Schema.define(version: 20150508213905) do
 
   create_table "interests", force: :cascade do |t|
     t.string   "interestname", limit: 255
@@ -42,6 +42,9 @@ ActiveRecord::Schema.define(version: 20150507142004) do
     t.string   "avatar_content_type", limit: 255
     t.integer  "avatar_file_size",    limit: 4
     t.datetime "avatar_updated_at"
+    t.string   "password_salt",       limit: 255
+    t.float    "latitude",            limit: 24
+    t.float    "longitude",           limit: 24
   end
 
   add_index "users", ["interest_id"], name: "index_users_on_interest_id", using: :btree

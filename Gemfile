@@ -58,6 +58,8 @@ group :development, :test do
 
   gem "mysql2"
 
+gem 'bcrypt', :require => 'bcrypt' 
+
   gem "mysql"
   ############################################
 end
