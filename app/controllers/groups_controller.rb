@@ -86,6 +86,10 @@ class GroupsController < ApplicationController
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
+    def searchnearestgroup_params
+      params.require(:group).permit(:name, :lat, :log, :desc, :membertitle, :user_id)
+    end
+
     def group_params
       params.require(:group).permit(:name, :lat, :log, :desc, :membertitle, :user_id)
     end

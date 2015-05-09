@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     end
   end
   resources :users
+  resources :usermessages
   root 'welcome#index'
   get 'welcome/index'
 

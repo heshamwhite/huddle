@@ -1,0 +1,2 @@
+module Concerns::GroupmessageHelper
+end

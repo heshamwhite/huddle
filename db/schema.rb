@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150509103133) do
+ActiveRecord::Schema.define(version: 20150509121159) do
 
   create_table "eventcomments", force: :cascade do |t|
     t.text     "body",       limit: 65535
@@ -112,7 +112,11 @@ ActiveRecord::Schema.define(version: 20150509103133) do
     t.integer  "receiver_id", limit: 4
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
+    t.boolean  "seen",        limit: 1
   end
+
+  add_index "usermessages", ["receiver_id"], name: "receiver_id", using: :btree
+  add_index "usermessages", ["sender_id"], name: "sender_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "username",            limit: 255
@@ -140,5 +144,7 @@ ActiveRecord::Schema.define(version: 20150509103133) do
   add_foreign_key "groupmessages", "groups"
   add_foreign_key "groupmessages", "users"
   add_foreign_key "groups", "users"
+  add_foreign_key "usermessages", "users", column: "receiver_id", name: "receiver_constraint_1"
+  add_foreign_key "usermessages", "users", column: "sender_id", name: "sender_constraint_1"
   add_foreign_key "users", "interests"
 end

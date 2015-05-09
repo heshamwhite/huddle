@@ -1,1 +1,95 @@
 <h1>Welcome to Huddle</h1>
+
+<div role="tabpanel">
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Search Nearby Groups</a></li>
+    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Search Group Interests</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="home">
+
+      <div>
+        <form class="form-inline" method="POST" action=<%= groups_searchnearest_path %>  >
+          <div class="form-group">
+            <label class="sr-only" for="exampleInputAmount">10</label>
+            <div class="input-group">
+              <div class="input-group-addon">
+                <span class="glyphicon glyphicon-search"></span>
+              </div>
+              <input type="number" class="form-control" id="exampleInputAmount" placeholder="Radius">
+              <div class="input-group-addon">KMs</div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+      </div>
+
+    </div>
+    <div role="tabpanel" class="tab-pane" id="profile">
+
+
+      <div>
+        <form class="form-inline">
+          <div class="form-group">
+            <label class="sr-only" for="exampleInputAmount">Enter Keywords</label>
+            <div class="input-group">
+              <div class="input-group-addon">
+                <span class="glyphicon glyphicon-search"></span>
+              </div>
+              <input type="number" class="form-control" id="exampleInputAmount" placeholder="Art">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+      </div>
+
+
+    </div>
+  </div>
+
+</div>
+<script>
+    $('#myTab a').click(function (e) {
+        e.preventDefault()
+        $(this).tab('show')
+    })
+</script>
+
+
+
+
+
+<br/>
+<table>
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Lat</th>
+    <th>Log</th>
+    <th>Desc</th>
+    <th>Membertitle</th>
+    <th>User</th>
+    <th colspan="3"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @groups.each do |group| %>
+      <tr>
+        <td><%= group.name %></td>
+        <td><%= group.lat %></td>
+        <td><%= group.log %></td>
+        <td><%= group.desc %></td>
+        <td><%= group.membertitle %></td>
+        <td><%= group.user %></td>
+        <td><%= link_to 'Show', group %></td>
+        <td><%= link_to 'Edit', edit_group_path(group) %></td>
+        <td><%= link_to 'Destroy', group, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
