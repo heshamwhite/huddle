@@ -4,7 +4,7 @@ class EventsController < ApplicationController
   # GET /events
   # GET /events.json
   def index
-    @events = Event.all
+    @events = Event.where("group_id = ?", params[:group_id])
   end
 
   # GET /events/1
@@ -12,9 +12,12 @@ class EventsController < ApplicationController
   def show
   end
 
+
+
   # GET /events/new
   def new
     @event = Event.new
+    @group = params[:group]
   end
 
   # GET /events/1/edit

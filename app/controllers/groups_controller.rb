@@ -18,6 +18,11 @@ class GroupsController < ApplicationController
     @groups = Group.within(10, :origin => [31.20861719142	,29.907912611961])
   end
 
+  def members
+    @group = Group.find(params[:id])
+    @users = @group.user
+  end
+
   def searchstr
     # probably accessed by
     # str should be passed in get

@@ -1,5 +1,14 @@
 <p id="notice"><%= notice %></p>
-
+<button onclick="loadEvents();" class="btn btn-default">
+    Events
+</button >
+<%= link_to 'New Event', new_event_path(:group => @group) , {:class => 'btn btn-default'} %>
+<button onclick="loadMembers();" class="btn btn-default">
+  Members
+</button >
+<div id="content">
+e
+</div>
 <p>
   <strong>Name:</strong>
   <%= @group.name %>
@@ -32,3 +41,55 @@
 
 <%= link_to 'Edit', edit_group_path(@group) %> |
 <%= link_to 'Back', groups_path %>
+
+<script>
+    function loadEvents()
+    {
+        $.get( "/events.json",{group_id:<%= @group.id %>},function (data){
+                    $("#content").html(" ");
+
+                    for(i=0;i<data.length;i++)
+                    {
+                        current = $("<div>");
+                        current.append("<h1>"+data[i].name+"</h1>");
+                        members = $("<div>");
+                        for (j=0;j<data[i].members.length;j++)
+                        {
+                            link = $("<a href='/users/"+data[i].members[j].id+"'></a>")
+                            link.append("<img src='"+data[i].members[j].avatar_file_name+"' with='50' height='50' >")
+                            members.append(link)
+                        }
+                        current.append(members)
+                        $("#content").append(current)
+                    }
+
+
+                }
+                ,"json"
+        )
+    }
+
+    function loadMembers()
+    {
+        $.get( "/groups/<%= @group.id %>/members.json",function (data){
+                    $("#content").html(" ");
+                    $("#content").append("<h1>Members</h1><br>")
+                    for(i=0;i<data.length;i++)
+                    {
+
+                            link = $("<a href='/users/"+data[i].id+"'></a>")
+                            link.append("<img src='"+data[i].avatar_file_name+"' with='50' height='50' >")
+                            link2 = $("<a href='/users/"+data[i].id+"'></a>")
+                            link2.append("<h2>"+data[i].username+"</h2><br>")
+
+
+                        $("#content").append(link)
+                        $("#content").append(link2)
+                    }
+
+
+                }
+                ,"json"
+        )
+    }
+</script>

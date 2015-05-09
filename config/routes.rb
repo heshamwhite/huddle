@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   resources :groups do
     member do
       get :searchneasrest, :as => 'searchneasrest'
+      get :members, :as => 'members'
     end
   end
   resources :users

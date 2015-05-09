@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150509103133) do
+ActiveRecord::Schema.define(version: 20150509134328) do
 
   create_table "eventcomments", force: :cascade do |t|
     t.text     "body",       limit: 65535
@@ -36,6 +36,13 @@ ActiveRecord::Schema.define(version: 20150509103133) do
   end
 
   add_index "events", ["group_id"], name: "index_events_on_group_id", using: :btree
+
+  create_table "events_users", id: false, force: :cascade do |t|
+    t.integer "user_id",  limit: 4
+    t.integer "event_id", limit: 4
+  end
+
+  add_index "events_users", ["user_id", "event_id"], name: "index_events_users_on_user_id_and_event_id", using: :btree
 
   create_table "groupimages", force: :cascade do |t|
     t.integer  "group_id",            limit: 4
@@ -64,8 +71,8 @@ ActiveRecord::Schema.define(version: 20150509103133) do
 
   create_table "groups", force: :cascade do |t|
     t.string   "name",                     limit: 255
-    t.float    "lat",                      limit: 53
-    t.float    "log",                      limit: 53
+    t.float    "lat",                      limit: 24
+    t.float    "log",                      limit: 24
     t.text     "desc",                     limit: 65535
     t.string   "membertitle",              limit: 255
     t.integer  "user_id",                  limit: 4
