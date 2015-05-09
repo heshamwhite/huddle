@@ -61,6 +61,9 @@ group :development, :test do
 gem 'bcrypt', :require => 'bcrypt' 
 
   gem "mysql"
+
+  gem 'geokit-rails'
+
   ############################################
 end
 

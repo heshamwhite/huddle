@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Groupimages</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Group</th>
+      <th>Desc</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @groupimages.each do |groupimage| %>
+      <tr>
+        <td><%= groupimage.group %></td>
+        <td><%= groupimage.desc %></td>
+        <td><%= link_to 'Show', groupimage %></td>
+        <td><%= link_to 'Edit', edit_groupimage_path(groupimage) %></td>
+        <td><%= link_to 'Destroy', groupimage, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Groupimage', new_groupimage_path %>

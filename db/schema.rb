@@ -11,7 +11,86 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150508213905) do
+
+ActiveRecord::Schema.define(version: 20150509103133) do
+
+  create_table "eventcomments", force: :cascade do |t|
+    t.text     "body",       limit: 65535
+    t.integer  "user_id",    limit: 4
+    t.integer  "event_id",   limit: 4
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
+  add_index "eventcomments", ["event_id"], name: "index_eventcomments_on_event_id", using: :btree
+  add_index "eventcomments", ["user_id"], name: "index_eventcomments_on_user_id", using: :btree
+
+  create_table "events", force: :cascade do |t|
+    t.string   "name",       limit: 255
+    t.float    "lat",        limit: 24
+    t.float    "log",        limit: 24
+    t.text     "desc",       limit: 65535
+    t.datetime "date"
+    t.integer  "group_id",   limit: 4
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
+  add_index "events", ["group_id"], name: "index_events_on_group_id", using: :btree
+
+  create_table "groupimages", force: :cascade do |t|
+    t.integer  "group_id",            limit: 4
+    t.text     "desc",                limit: 65535
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+    t.string   "gimage_file_name",    limit: 255
+    t.string   "gimage_content_type", limit: 255
+    t.integer  "gimage_file_size",    limit: 4
+    t.datetime "gimage_updated_at"
+  end
+
+  add_index "groupimages", ["group_id"], name: "index_groupimages_on_group_id", using: :btree
+
+  create_table "groupmessages", force: :cascade do |t|
+    t.string   "title",      limit: 255
+    t.text     "body",       limit: 65535
+    t.integer  "user_id",    limit: 4
+    t.integer  "group_id",   limit: 4
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
+  add_index "groupmessages", ["group_id"], name: "index_groupmessages_on_group_id", using: :btree
+  add_index "groupmessages", ["user_id"], name: "index_groupmessages_on_user_id", using: :btree
+
+  create_table "groups", force: :cascade do |t|
+    t.string   "name",                     limit: 255
+    t.float    "lat",                      limit: 53
+    t.float    "log",                      limit: 53
+    t.text     "desc",                     limit: 65535
+    t.string   "membertitle",              limit: 255
+    t.integer  "user_id",                  limit: 4
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+    t.string   "groupavatar_file_name",    limit: 255
+    t.string   "groupavatar_content_type", limit: 255
+    t.integer  "groupavatar_file_size",    limit: 4
+    t.datetime "groupavatar_updated_at"
+    t.string   "bgimage_file_name",        limit: 255
+    t.string   "bgimage_content_type",     limit: 255
+    t.integer  "bgimage_file_size",        limit: 4
+    t.datetime "bgimage_updated_at"
+  end
+
+  add_index "groups", ["user_id"], name: "index_groups_on_user_id", using: :btree
+
+  create_table "groups_users", force: :cascade do |t|
+    t.integer "user_id",  limit: 4
+    t.integer "group_id", limit: 4
+  end
+
+  add_index "groups_users", ["group_id"], name: "index_groups_users_on_group_id", using: :btree
+  add_index "groups_users", ["user_id"], name: "index_groups_users_on_user_id", using: :btree
 
   create_table "interests", force: :cascade do |t|
     t.string   "interestname", limit: 255
@@ -26,6 +105,15 @@ ActiveRecord::Schema.define(version: 20150508213905) do
 
   add_index "interests_users", ["interest_id"], name: "index_interests_users_on_interest_id", using: :btree
   add_index "interests_users", ["user_id"], name: "index_interests_users_on_user_id", using: :btree
+
+  create_table "usermessages", force: :cascade do |t|
+    t.string   "title",       limit: 255
+    t.text     "body",        limit: 65535
+    t.integer  "sender_id",   limit: 4
+    t.integer  "receiver_id", limit: 4
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string   "username",            limit: 255
@@ -49,5 +137,12 @@ ActiveRecord::Schema.define(version: 20150508213905) do
 
   add_index "users", ["interest_id"], name: "index_users_on_interest_id", using: :btree
 
+  add_foreign_key "eventcomments", "events"
+  add_foreign_key "eventcomments", "users"
+  add_foreign_key "events", "groups"
+  add_foreign_key "groupimages", "groups"
+  add_foreign_key "groupmessages", "groups"
+  add_foreign_key "groupmessages", "users"
+  add_foreign_key "groups", "users"
   add_foreign_key "users", "interests"
 end

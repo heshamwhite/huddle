@@ -1,0 +1,74 @@
+<script src="http://maps.googleapis.com/maps/api/js"></script>
+
+
+<%= form_for(@group) do |f| %>
+  <% if @group.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@group.errors.count, "error") %> prohibited this group from being saved:</h2>
+
+      <ul>
+      <% @group.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %><br>
+    <%= f.text_field :name %>
+  </div>
+    <b>Location</b><br/>
+    <div class="field" id="googleMap" style="width:500px;height:380px;">
+
+    </div>
+  <div class="field">
+    <%= f.label :lat %><br>
+    <%= f.text_field :lat %>
+  </div>
+  <div class="field">
+    <%= f.label :log %><br>
+    <%= f.text_field :log %>
+  </div>
+  <div class="field">
+    <%= f.label :desc %><br>
+    <%= f.text_area :desc %>
+  </div>
+  <div class="field">
+    <%= f.label :membertitle %><br>
+    <%= f.text_field :membertitle %>
+  </div>
+  <div class="field">
+    <%= f.label :user_id %><br>
+    <%= f.text_field :user_id %>
+  </div>
+
+    <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+<script>
+    function initialize() {
+        var mapProp = {
+            center:new google.maps.LatLng(51.508742,-0.120850),
+            zoom:5,
+            mapTypeId:google.maps.MapTypeId.ROADMAP
+        };
+        var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+
+        google.maps.event.addListener(map, "click", function (e) {
+
+            //lat and lng is available in e object
+            var latLng = e.latLng;
+            console.log(e.latLng.lat());
+            console.log(e.latLng.lng());
+            document.getElementById("group_lat").value = e.latLng.lat();
+            document.getElementById("group_log").value = e.latLng.lng();
+
+        });
+        return map;
+    }
+    var mapx = google.maps.event.addDomListener(window, 'load', initialize);
+
+
+</script>
