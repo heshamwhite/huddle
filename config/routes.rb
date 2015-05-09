@@ -1,8 +1,21 @@
 Rails.application.routes.draw do
+  get 'groups/searchnearest'
+  get 'groups/searchstr'
 
+  resources :groupmessages
+  resources :eventcomments
+  resources :groupimages
+  resources :events
+  #resources :groups
+  resources :groups do
+    member do
+      get :searchneasrest, :as => 'searchneasrest'
+    end
+  end
   resources :users
   root 'welcome#index'
   get 'welcome/index'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

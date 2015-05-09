@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Group:</strong>
+  <%= @groupimage.group %>
+</p>
+
+<p>
+  <strong>Desc:</strong>
+  <%= @groupimage.desc %>
+</p>
+
+<%= link_to 'Edit', edit_groupimage_path(@groupimage) %> |
+<%= link_to 'Back', groupimages_path %>

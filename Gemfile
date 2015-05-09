@@ -59,6 +59,9 @@ group :development, :test do
   gem "mysql2"
 
   gem "mysql"
+
+  gem 'geokit-rails'
+
   ############################################
 end
 
