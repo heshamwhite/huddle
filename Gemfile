@@ -58,9 +58,13 @@ group :development, :test do
 
   gem "mysql2"
 
+  gem 'bcrypt', '~> 3.1.2'
+
   gem "mysql"
 
   gem 'geokit-rails'
+
+
 
   ############################################
 end
