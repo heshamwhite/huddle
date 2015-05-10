@@ -38,10 +38,9 @@ x
     <%= f.label :date %><br>
     <%= f.datetime_select :date %>
   </div>
-  <div class="field">
-    <%= f.label :group_id %><br>
-    <%= f.text_field :group_id %>
-  </div>
+    <div class="field">
+      <%= f.hidden_field :group_id, :value => @group %>
+    </div>
   <div class="actions">
     <%= f.submit %>
   </div>

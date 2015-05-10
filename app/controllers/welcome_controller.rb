@@ -1,6 +1,8 @@
 class WelcomeController < ApplicationController
   def index
-    @myuser = User.find(5)
+    id = session[:user_id]
+    @myuser = User.find(id)
     @groups = @myuser.group
+
   end
 end
