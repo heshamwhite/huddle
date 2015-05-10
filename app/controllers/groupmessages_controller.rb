@@ -4,7 +4,7 @@ class GroupmessagesController < ApplicationController
   # GET /groupmessages
   # GET /groupmessages.json
   def index
-    @groupmessages = Groupmessage.all
+    @groupmessages = Groupmessage.where("group_id = ?", params[:group_id])
   end
 
   # GET /groupmessages/1

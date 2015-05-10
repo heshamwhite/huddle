@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :notifications
+  resources :groupreplies
   get 'groups/searchnearest'
   get 'groups/searchstr'
 
