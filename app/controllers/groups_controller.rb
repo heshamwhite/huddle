@@ -10,12 +10,25 @@ class GroupsController < ApplicationController
   # GET /groups/1
   # GET /groups/1.json
   def show
+    @a=[]
+
+    groupsinterest= GroupsInterest.where(group_id: @group.id)
+
+    groupsinterest.each do|c|
+      @interest=Interest.find_by( id: c.interest_id)
+      @a.push(@interest.interestname)
+      logger.debug @a
+    end
   end
 
   def searchnearest
     # 10 is the distance in kilometers , should be passed in get
     # origin is the lat and lng , will be retrieved from user session info
-    @groups = Group.within(10, :origin => [31.20861719142	,29.907912611961])
+    @distance = params[:distance]
+    currentlat = params[:search_lat]
+    currentlng = params[:search_lng]
+    #render plain: "OK"+@distance.to_s
+    @groups = Group.within( @distance, :origin => [currentlat	,currentlng])
   end
 
   def members
@@ -26,13 +39,16 @@ class GroupsController < ApplicationController
   def searchstr
     # probably accessed by
     # str should be passed in get
-    str = "art"
+    @searchstr = params[:searchstr]
+    str = @searchstr
     str.strip!
     str.downcase!
     str_modified = "%" + str + "%"
     @groups_str_in_desc = Group.where("LOWER(groups.desc) LIKE ? ",str_modified)
+    interestObj = Interest.where("LOWER(interests.interestname) LIKE ? ",str_modified)
+    @groups_str_in_interest = interestObj.group
     #@groups_str_in_desc = Group.find_by_sql("select * from groups where groups.desc LIKE '%art%';")
-    @groups = @groups_str_in_desc
+    @groups = @groups_str_in_desc + @groups_str_in_interest
   end
 
   # GET /groups/new
@@ -47,17 +63,31 @@ class GroupsController < ApplicationController
   # POST /groups
   # POST /groups.json
   def create
-    @group = Group.new(group_params)
+    modifiedparams = group_params
+    modifiedparams[:user_id] = session[:user_id]
 
+    @group = Group.new(group_params)
+    modifiedparams[:user_id] = session[:user_id]
+    myintereststr = params[:interest]
+    #render plain:myintereststr
     respond_to do |format|
       if @group.save
-        format.html { redirect_to @group, notice: 'Group was successfully created.' }
+        myintereststr.split(',').each do|c|
+          if c.to_s.strip.length != 0
+            @interest=Interest.find_or_create_by(interestname: c)
+
+            @group_interest= GroupsInterest.new(group_id:@group.id, interest_id:@interest.id)
+            @group_interest.save
+          end
+        end
+        format.html { redirect_to @group, notice: 'User was successfully created.' }
         format.json { render :show, status: :created, location: @group }
       else
         format.html { render :new }
         format.json { render json: @group.errors, status: :unprocessable_entity }
       end
     end
+
   end
 
   # PATCH/PUT /groups/1
@@ -84,6 +114,7 @@ class GroupsController < ApplicationController
     end
   end
 
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_group
@@ -91,11 +122,9 @@ class GroupsController < ApplicationController
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
-    def searchnearestgroup_params
-      params.require(:group).permit(:name, :lat, :log, :desc, :membertitle, :user_id)
-    end
 
     def group_params
-      params.require(:group).permit(:name, :lat, :log, :desc, :membertitle, :user_id)
+      params.require(:group).permit(:name, :lat, :log, :desc, :membertitle, :user_id, :interest)
     end
+
 end

@@ -13,14 +13,16 @@
     <div role="tabpanel" class="tab-pane active" id="home">
 
       <div>
-        <form class="form-inline" method="POST" action=<%= groups_searchnearest_path %>  >
+        <form class="form-inline" method="GET" action=<%= groups_searchnearest_path %>  >
           <div class="form-group">
             <label class="sr-only" for="exampleInputAmount">10</label>
             <div class="input-group">
               <div class="input-group-addon">
                 <span class="glyphicon glyphicon-search"></span>
               </div>
-              <input type="number" class="form-control" id="exampleInputAmount" placeholder="Radius">
+              <input type="number" class="form-control" id="distance" name="distance" placeholder="Radius">
+              <input type="hidden" id="search_lat" name="search_lat" value="<%= @myuser.latitude %>" >
+              <input type="hidden" id="search_lng" name="search_lng" value="<%= @myuser.longitude %>" >
               <div class="input-group-addon">KMs</div>
             </div>
           </div>
@@ -33,14 +35,14 @@
 
 
       <div>
-        <form class="form-inline">
+        <form class="form-inline" method="GET" action= <%= groups_searchstr_path %> >
           <div class="form-group">
             <label class="sr-only" for="exampleInputAmount">Enter Keywords</label>
             <div class="input-group">
               <div class="input-group-addon">
                 <span class="glyphicon glyphicon-search"></span>
               </div>
-              <input type="number" class="form-control" id="exampleInputAmount" placeholder="Art">
+              <input type="text" class="form-control" id="exampleInputAmount" name="searchstr" placeholder="Art">
             </div>
           </div>
           <button type="submit" class="btn btn-primary">Search</button>
@@ -57,6 +59,23 @@
         e.preventDefault()
         $(this).tab('show')
     })
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(changeposition);
+        } else {
+            x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+    }
+
+    function changeposition(position) {
+        console.log("you are at lat: "+document.getElementById("search_lat").value + "and lng: "+ document.getElementById("search_lng").value );
+        console.log("you are at lat: "+position.coords.latitude + "and lng: "+ position.coords.longitude );
+        document.getElementById("search_lat").value =  position.coords.latitude;
+        document.getElementById("search_lng").value =  position.coords.longitude;
+    }
+
+    getLocation();
 </script>
 
 

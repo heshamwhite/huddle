@@ -63,10 +63,10 @@
             marker.setMap(map);
         <% end %>
         var myarea=new google.maps.LatLng(31.21	,29.91);
-
+        var myradius = <%= @distance %> * 1000;
         var myCity = new google.maps.Circle({
             center:myarea,
-            radius:10000,
+            radius:myradius,
             strokeColor:"#0000FF",
             strokeOpacity:0.3,
             strokeWeight:2,
