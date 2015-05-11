@@ -10,6 +10,9 @@ class EventsController < ApplicationController
        redirect_to :controller =>'welcome', :action=> 'index'
 
      end
+
+    @events = Event.where("group_id = ?", params[:group_id])
+
   end
 
   # GET /events/1
@@ -17,9 +20,42 @@ class EventsController < ApplicationController
   def show
   end
 
+  def memberjoin
+    @event = Event.find(params[:id])
+    @user = User.find(session[:user_id])
+
+    @message = ""
+    if params[:intent] == "join"
+      unless @event.users.include?(@user)
+        @user.events << @event
+        @message = "joined the event"
+      else
+        @message = "already a member"
+      end
+    elsif params[:intent] == "leave"
+      if @event.users.include?(@user)
+        @event.users.delete(@user)
+        @message = "left the event"
+      else
+        @message = "only members can leave"
+      end
+
+    end
+    render json: {result: @message}
+  end
+
+  def membership
+    @event = Event.find(params[:id])
+    @user = User.find(session[:user_id])
+    @found = @event.users.include?(@user)
+    render json: {result: @found}
+
+  end
+
   # GET /events/new
   def new
     @event = Event.new
+    @group = params[:group]
   end
 
   # GET /events/1/edit
@@ -29,17 +65,40 @@ class EventsController < ApplicationController
   # POST /events
   # POST /events.json
   def create
-    @event = Event.new(event_params)
+    @group = Group.find(event_params[:group_id])
 
-    respond_to do |format|
-      if @event.save
-        format.html { redirect_to @event, notice: 'Event was successfully created.' }
-        format.json { render :show, status: :created, location: @event }
-      else
-        format.html { render :new }
-        format.json { render json: @event.errors, status: :unprocessable_entity }
+    @user = User.find(session[:user_id])
+    @ismember = @group.user.include?(@user)
+
+    if @ismember
+      @event = Event.new(event_params)
+
+      respond_to do |format|
+        if @event.save
+          @group = Group.find(event_params[:group_id])
+          @users = @group.user
+
+          @users.each do |currentuser|
+            data = Hash.new
+            data[:body] = "New Event in Group " + @group.name
+            data[:url] = "/events/" + @event.id.to_s
+            data[:notificationtype] = "newevent"
+            data[:user_id] = currentuser.id
+            notification = Notification.create(data)
+            notification.save
+          end
+
+          format.html { redirect_to @event, notice: 'Event was successfully created.' }
+          format.json { render :show, status: :created, location: @event }
+        else
+          format.html { render :new }
+          format.json { render json: @event.errors, status: :unprocessable_entity }
+        end
       end
+    else
+      render plain:"Unauthorized operation"
     end
+
   end
 
   # PATCH/PUT /events/1

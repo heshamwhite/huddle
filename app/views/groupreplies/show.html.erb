@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Body:</strong>
+  <%= @groupreply.body %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @groupreply.user %>
+</p>
+
+<p>
+  <strong>Groupmessage:</strong>
+  <%= @groupreply.groupmessage %>
+</p>
+
+<%= link_to 'Edit', edit_groupreply_path(@groupreply) %> |
+<%= link_to 'Back', groupreplies_path %>

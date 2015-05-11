@@ -1,34 +1,349 @@
+<script src="http://maps.googleapis.com/maps/api/js"></script>
+
+<script>
+  document.getElementsByTagName("body")[0].setAttribute("background","<%= @group.bgimage.url %>")
+        console.log( document.getElementsByTagName("body")[0].getAttribute("background"))
+</script>
 <p id="notice"><%= notice %></p>
+<a href="/groups/<%= @group.id %>" class="btn btn-warning">Main Page</a>
+<button onclick="join();" id="join-button" class="btn btn-success">
+  <span class="glyphicon glyphicon-plus"></span> Join
+</button >
+<% if @ismember %>
+    <%= link_to 'New Event + ', new_event_path(:group => @group) , {:class => 'btn btn-default'} %>
+<% end %>
+<button onclick="loadEvents();" class="btn btn-default">
+    Events
+</button >
 
-<p>
-  <strong>Name:</strong>
-  <%= @group.name %>
-</p>
 
-<p>
-  <strong>Lat:</strong>
-  <%= @group.lat %>
-</p>
+<button onclick="loadMembers();" class="btn btn-default">
+  Members
+</button >
+<button onclick="loadDiscussions();" class="btn btn-default">
+  Discussions
+</button >
+<button onclick="loadGroupImages();" class="btn btn-default">
+  Group Images
+</button >
+<a href="/groups/newgroupimages/<%= @group.id %>" class="btn btn-info">Add Images</a>
 
-<p>
-  <strong>Log:</strong>
-  <%= @group.log %>
-</p>
+<div id="content" style="padding:20px;background:rgba(255, 255, 255, .85);" >
+  <h1> <%= @group.name %> </h1>
+  <div class="row">
+    <div class="col-xs-6">
+      <img src="<%= @group.groupavatar.url(:medium) %>" />
 
-<p>
-  <strong>Desc:</strong>
-  <%= @group.desc %>
-</p>
+    </div>
+    <div class="col-xs-6">
+      <p>
+        <strong>Lat:</strong>
+        <%= @group.lat %>
+      </p>
 
-<p>
-  <strong>Membertitle:</strong>
-  <%= @group.membertitle %>
-</p>
+      <p>
+        <strong>Log:</strong>
+        <%= @group.log %>
+      </p>
 
-<p>
-  <strong>User:</strong>
-  <%= @group.user %>
-</p>
+      <p>
+        <strong>Description:</strong>
+        <%= @group.desc %>
+      </p>
+
+      <p>
+        <strong>Membertitle:</strong>
+        <%= @group.membertitle %>
+      </p>
+
+
+      <p>
+        <strong>Interest:</strong>
+        <% @a.each do |p| %>
+            <%= p %>
+        <% end %>
+      </p>
+    </div>
+    <div class="row">
+      <div class="field col-xs-12" id="googleMap" style="width:90%;height:380px;margin: 40px;  border-style: solid; border-width: 1px; ">
+
+      </div>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
 
 <%= link_to 'Edit', edit_group_path(@group) %> |
 <%= link_to 'Back', groups_path %>
+
+<script>
+    function initialize() {
+        var mylat = <%= @group.lat %>;
+        var mylng = <%= @group.log %>;
+        var mytitle = "<%= @group.name %>";
+        var xCenter=new google.maps.LatLng(mylat,mylng);
+        var mapProp = {
+            center:xCenter,
+            zoom:5,
+            mapTypeId:google.maps.MapTypeId.ROADMAP
+        };
+        var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+        var marker=new google.maps.Marker({
+            position: xCenter,
+            animation:google.maps.Animation.BOUNCE,
+            title: mytitle
+        });
+        marker.setMap(map);
+        return map;
+    }
+    initialize();
+    //var mapx = google.maps.event.addDomListener(window, 'load', initialize);
+
+
+</script>
+
+<script>
+
+    function join()
+    {
+
+        if ($("#join-button").attr("class") == "btn btn-success")
+        {
+
+            intention = "join"
+        }else
+        {
+
+            intention = "leave"
+        }
+
+        $.get( "/groups/<%= @group.id %>/memberjoin.json",{intent:intention},function (data){
+
+                alert(data.result)
+                    membership()
+                }
+                ,"json"
+        )
+    }
+
+    function membership()
+    {
+        $.get( "/groups/<%= @group.id %>/membership.json",function (data){
+
+                if (data.result == true)
+                {
+                    $("#join-button").attr("class","btn btn-danger")
+                    $("#join-button").html('<span class="glyphicon glyphicon-minus"></span> Leave')
+                }
+                else
+                {
+                    $("#join-button").attr("class","btn btn-success")
+                    $("#join-button").html('<span class="glyphicon glyphicon-plus"></span> Join')
+                }
+
+
+                }
+                ,"json"
+        )
+    }
+
+    function loadEvents()
+    {
+        $.get( "/events.json",{group_id:<%= @group.id %>},function (data){
+                    $("#content").html(" ");
+
+                    for(i=0;i<data.length;i++)
+                    {
+                        current = $("<div>");
+                        link2 = $("<a href='"+data[i].url+"'></a>")
+                        link2.append("<h1>"+data[i].name+"</h1>");
+                        current.append(link2)
+                        members = $("<div>");
+                        for (j=0;j<data[i].members.length;j++)
+                        {
+                            link = $("<a href='/users/"+data[i].members[j].id+"'></a>")
+                            link.append(" <img src='"+data[i].members[j].avatar_file_name+"' with='50' height='50' > ")
+                            members.append(link)
+                        }
+                        current.append(members)
+                        current.attr("class","well")
+                        $("#content").append(current)
+                    }
+
+
+                }
+                ,"json"
+        )
+    }
+
+    function loadGroupImages()
+    {
+        $.get( "/groups/<%= @group.id %>/images.json",function (data){
+                    $("#content").html(" ");
+                    $("#content").append("<h1>Images</h1><br>")
+
+
+
+                    disp = $('<div class="row"> </div>')
+                    for(i=0;i<data.length;i++)
+                    {
+
+                        link = $("<a href='"+data[i].img+"' class='thumbnail'></a>")
+                        link.append('<img src="'+data[i].img+'"  style="width: 300px; height: 200px">')
+
+                        current = $("<div>");
+                        current.append(link)
+
+                        current.attr("class","col-xs-6 col-md-3")
+
+                        disp.append(current)
+
+                    }
+
+                    $("#content").append(disp)
+                }
+                ,"json"
+        )
+    }
+
+    function loadMembers()
+    {
+        $.get( "/groups/<%= @group.id %>/members.json",function (data){
+                    $("#content").html(" ");
+                    $("#content").append("<h1>Members</h1><br>")
+                    for(i=0;i<data.length;i++)
+                    {
+
+                            link = $("<a href='/users/"+data[i].id+"'></a>")
+                            link.append(" <img src='"+data[i].avatar_file_name+"' with='50' height='50' > ")
+                            link2 = $("<a href='/users/"+data[i].id+"'></a>")
+                            link2.append("<h2>"+data[i].username+"</h2><br>")
+                        current = $("<div>");
+                        current.append(link)
+                        current.append(link2)
+                        current.attr("class","well")
+
+                        $("#content").append(current)
+
+                    }
+
+
+                }
+                ,"json"
+        )
+    }
+
+
+    function loadDiscussions()
+    {
+        $.get( "/groupmessages.json",{group_id:<%= @group.id %>},function (data){
+                    $("#content").html(" ");
+
+
+                    $("#content").append('<br><a href="/groupmessages/new?group_id=<%= @group.id %>" class="btn btn-info">+ New Discussion</a><br><br>')
+
+                    for(i=0;i<data.length;i++)
+                    {   current = $("<div>");
+                        current.attr("id","discussion-"+data[i].id)
+                        current.attr("class","well")
+                        current.css("background", "white");
+                        current.css("border", "solid");
+                        link = $("<a href='"+data[i].url+"'></a>")
+
+                        link.append("<h1>"+data[i].title+"</h1>");
+                        current.append(link);
+
+                        link2 = $("<a href='"+data[i].userurl+"'></a>")
+                        link2.append(" <img src='"+data[i].userimage+"' with='50' height='50' > ")
+                        current.append(link2);
+                        current.append('<button onclick="loadReplies(this,'+data[i].id+');" class="btn btn-info"> Replies <span class="badge">'+data[i].number_of_replies+'</span> </button >')
+                        current.append('<button onclick="Reply(this,'+data[i].id+');" class="btn btn-default" id="reply-'+data[i].id+'"> Reply </button >')
+                        current.append("<hr>")
+                        current.append("<p>"+data[i].body+"</p>");
+
+
+
+                        $("#content").append(current)
+                    }
+
+
+                }
+                ,"json"
+        )
+    }
+
+
+    function Reply(btn,id)
+    {
+
+        if (document.querySelector("#comment-"+id))
+        {
+            return ;
+        }
+
+        div = $('<div class="form-group"> <label for="comment">Comment:</label>  <textarea class="form-control" rows="5" id="comment-'+id+'"></textarea> </div>')
+        div.append('<button onclick="groupReply('+id+');" class="btn btn-default" > Post Comment </button >')
+        $("#reply-"+id).after(div)
+
+    }
+
+    function groupReply(id)
+    {
+        comment = document.querySelector("#comment-"+id).value;
+        console.log(id)
+        console.log(comment)
+        console.log(<%= session[:user_id] %>)
+        $.post( "/groupreplies",{groupmessage_id : id ,body : comment, user_id : <%= session[:user_id] %> },function (data){
+
+                    document.querySelector("#comment-"+id).value = "";
+
+                }
+                ,"json"
+        )
+    }
+
+
+    function loadReplies(btn,id)
+    {
+
+        $.get( "/groupreplies.json",{groupmessage_id:id},function (data){
+
+                    btn.disabled = true;
+
+                    $("#discussion-"+id).append('<hr>')
+
+                    for(i=0;i<data.length;i++)
+                    {
+
+                        current = $("<div>");
+
+                        current.attr("class","well")
+
+                        link2 = $("<a href='"+data[i].userurl+"'></a>")
+                        link2.append(" <img src='"+data[i].userimage+"' with='50' height='50' > ")
+                        link2.append("<h5>"+data[i].username+"</h5>")
+
+                        current.append(link2)
+                        current.append("<hr>")
+                        current.append("<h4>"+data[i].body+"</h4>")
+                        $("#discussion-"+id).append(current)
+                    }
+
+
+                }
+                ,"json"
+        )
+
+    }
+
+
+    membership()
+</script>

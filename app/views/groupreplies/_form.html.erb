@@ -1,0 +1,29 @@
+<%= form_for(@groupreply) do |f| %>
+  <% if @groupreply.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@groupreply.errors.count, "error") %> prohibited this groupreply from being saved:</h2>
+
+      <ul>
+      <% @groupreply.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :body %><br>
+    <%= f.text_area :body %>
+  </div>
+  <div class="field">
+    <%= f.label :user_id %><br>
+    <%= f.text_field :user_id %>
+  </div>
+  <div class="field">
+    <%= f.label :groupmessage_id %><br>
+    <%= f.text_field :groupmessage_id %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -15,24 +15,99 @@ class GroupsController < ApplicationController
   # GET /groups/1
   # GET /groups/1.json
   def show
+    @a=[]
+
+    groupsinterest= GroupsInterest.where(group_id: @group.id)
+
+    groupsinterest.each do|c|
+      @interest=Interest.find_by( id: c.interest_id)
+      @a.push(@interest.interestname)
+      logger.debug @a
+    end
+
+    @user = User.find(session[:user_id])
+    @ismember = @group.user.include?(@user)
+
   end
 
   def searchnearest
     # 10 is the distance in kilometers , should be passed in get
     # origin is the lat and lng , will be retrieved from user session info
-    @groups = Group.within(10, :origin => [31.20861719142	,29.907912611961])
+    @distance = params[:distance]
+    currentlat = params[:search_lat]
+    currentlng = params[:search_lng]
+    #render plain: "OK"+@distance.to_s
+    @groups = Group.within( @distance, :origin => [currentlat	,currentlng])
+  end
+
+  def members
+    @group = Group.find(params[:id])
+    @users = @group.user
+  end
+
+  def images
+    @group = Group.find(params[:id])
+    @images = @group.groupimages
+  end
+
+  def memberjoin
+    @group = Group.find(params[:id])
+    @user = User.find(session[:user_id])
+
+    @message = ""
+    if params[:intent] == "join"
+      unless @group.user.include?(@user)
+        @user.group << @group
+        @message = "joined the group"
+      else
+        @message = "already a member"
+      end
+    elsif params[:intent] == "leave"
+      if @group.user.include?(@user)
+        @group.user.delete(@user)
+        @message = "left the group"
+      else
+        @message = "only members can leave"
+      end
+
+    end
+    render json: {result: @message}
+  end
+
+  def membership
+    @group = Group.find(params[:id])
+    @user = User.find(session[:user_id])
+    @found = @group.user.include?(@user)
+    render json: {result: @found}
+
   end
 
   def searchstr
     # probably accessed by
     # str should be passed in get
-    str = "art"
+    @groups = Array.new
+    @searchstr = params[:searchstr]
+    str = @searchstr
     str.strip!
     str.downcase!
-    str_modified = "%" + str + "%"
-    @groups_str_in_desc = Group.where("LOWER(groups.desc) LIKE ? ",str_modified)
-    #@groups_str_in_desc = Group.find_by_sql("select * from groups where groups.desc LIKE '%art%';")
-    @groups = @groups_str_in_desc
+    str.split.each do |keyword|
+      logger.debug keyword
+      str_modified = "%" + keyword + "%"
+      @groups_str_in_desc = Group.where("LOWER(groups.desc) LIKE ? ",str_modified)
+      @interestObj = Interest.where("LOWER(interests.interestname) LIKE ? ",str_modified).first
+      #render plain: @interestObj.inspect
+
+      if @interestObj!=nil
+        @groups_str_in_interest = @interestObj.groups
+        if @groups_str_in_interest !=nil
+          @groups =  @groups + @groups_str_in_interest
+        end
+      end
+
+      if @groups_str_in_desc !=nil
+        @groups =  @groups + @groups_str_in_desc
+      end
+    end
   end
 
   # GET /groups/new
@@ -47,17 +122,31 @@ class GroupsController < ApplicationController
   # POST /groups
   # POST /groups.json
   def create
-    @group = Group.new(group_params)
+    modifiedparams = group_params
+    modifiedparams[:user_id] = session[:user_id]
 
+    @group = Group.new(group_params)
+    modifiedparams[:user_id] = session[:user_id]
+    myintereststr = params[:interest]
+    #render plain:myintereststr
     respond_to do |format|
       if @group.save
-        format.html { redirect_to @group, notice: 'Group was successfully created.' }
+        myintereststr.split(',').each do|c|
+          if c.to_s.strip.length != 0
+            @interest=Interest.find_or_create_by(interestname: c)
+
+            @group_interest= GroupsInterest.new(group_id:@group.id, interest_id:@interest.id)
+            @group_interest.save
+          end
+        end
+        format.html { redirect_to @group, notice: 'User was successfully created.' }
         format.json { render :show, status: :created, location: @group }
       else
         format.html { render :new }
         format.json { render json: @group.errors, status: :unprocessable_entity }
       end
     end
+
   end
 
   # PATCH/PUT /groups/1
@@ -79,6 +168,18 @@ class GroupsController < ApplicationController
      end
   end
 
+  def uploadgroupimages
+    @group = Group.find(params[:id])
+    params[:groupimages]['gimage'].each do |a|
+      @groupimage = @group.groupimages.create!(:gimage => a, :group_id => @group.id)
+    end
+    redirect_to  @group
+  end
+
+  def newgroupimages
+    @group = Group.find(params[:id])
+  end
+
   # DELETE /groups/1
   # DELETE /groups/1.json
   def destroy
@@ -94,6 +195,7 @@ class GroupsController < ApplicationController
      end
   end
 
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_group
@@ -104,7 +206,14 @@ class GroupsController < ApplicationController
 end
 
     # Never trust parameters from the scary internet, only allow the white list through.
+
     def group_params
-      params.require(:group).permit(:name, :lat, :log, :desc, :membertitle, :user_id)
+      params.require(:group).permit(:name, :lat, :log, :desc, :membertitle, :user_id, :interest, :groupavatar, :bgimage)
     end
+
+    def groupphoto_params
+      #params.require(:groupimage).permit(:group_id, :gimage)
+      params.require(:group).permit(:name, groupimages_attributes: [:id, :group_id, :gimage])
+    end
+
 end

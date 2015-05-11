@@ -1,5 +1,9 @@
 <p id="notice"><%= notice %></p>
 
+<button onclick="join();" id="join-button" class="btn btn-success">
+  <span class="glyphicon glyphicon-plus"></span> Join
+</button >
+
 <p>
   <strong>Name:</strong>
   <%= @event.name %>
@@ -32,3 +36,52 @@
 
 <%= link_to 'Edit', edit_event_path(@event) %> |
 <%= link_to 'Back', events_path %>
+
+<script>
+
+    function join()
+    {
+
+        if ($("#join-button").attr("class") == "btn btn-success")
+        {
+
+            intention = "join"
+        }else
+        {
+
+            intention = "leave"
+        }
+
+        $.get( "/events/<%= @event.id %>/memberjoin.json",{intent:intention},function (data){
+
+                    alert(data.result)
+                    membership()
+                }
+                ,"json"
+        )
+    }
+
+    function membership()
+    {
+        $.get( "/events/<%= @event.id %>/membership.json",function (data){
+
+                    if (data.result == true)
+                    {
+                        $("#join-button").attr("class","btn btn-danger")
+                        $("#join-button").html('<span class="glyphicon glyphicon-minus"></span> Leave')
+                    }
+                    else
+                    {
+                        $("#join-button").attr("class","btn btn-success")
+                        $("#join-button").html('<span class="glyphicon glyphicon-plus"></span> Join')
+                    }
+
+
+                }
+                ,"json"
+        )
+    }
+
+
+    membership()
+</script>

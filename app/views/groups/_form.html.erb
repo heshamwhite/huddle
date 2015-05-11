@@ -38,11 +38,19 @@
     <%= f.label :membertitle %><br>
     <%= f.text_field :membertitle %>
   </div>
-  <div class="field">
-    <%= f.label :user_id %><br>
-    <%= f.text_field :user_id %>
-  </div>
+    <div class="field">
+      Group Image:
+      <%= f.file_field :groupavatar %>
+    </div>
+    <div class="field">
+      Group Background:
+      <%= f.file_field :bgimage %>
+    </div>
+    <div class="field">
 
+      <b></b>Interests:</b><input type="text" id="interest" name="interest" />
+
+    </div>
     <div class="actions">
     <%= f.submit %>
   </div>

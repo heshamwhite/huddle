@@ -61,7 +61,7 @@ group :development, :test do
 
   gem "mysql2"
 
-gem 'bcrypt', :require => 'bcrypt' 
+  gem 'bcrypt', '~> 3.1.2'
 
   gem "mysql"
 gem 'omniauth'
@@ -69,6 +69,8 @@ gem 'omniauth'
   gem 'geokit-rails'
   gem 'omniauth-facebook'
 
+
+  gem 'carrierwave'
 
   ############################################
 end

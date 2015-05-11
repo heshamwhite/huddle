@@ -37,28 +37,69 @@
   <%= javascript_include_tag "application" %>
 </head>
 <body>
-
-
-
-<div class="navbar navbar-default navbar-static-top">
-
-  <div class="container">
-    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>
-    <a class="navbar-brand" href="#">Huddle</a>
-    <div class="navbar-collapse collapse navbar-responsive-collapse">
-      <ul class="nav navbar-nav">
-        <li><%= link_to "Link1", "/path1"  %></li>
-        <li><%= link_to "Link2", "/path2"  %></li>
-        <li><%= link_to "Link3", "/path3"  %></li>
-      </ul>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/welcome/index">Huddle</a>
     </div>
-  </div>
-</div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/groups/new">Create Group <span class="sr-only">(current)</span></a></li>
+        <li><a href="/users/editprofile">Edit Profile</a></li>
+
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+
+          <% if current_user %>
+              <a href="/users/profilepage" >Hello, <%=current_user.username%></a>
+
+          <% else %>
+              <%= link_to "Sign up", sign_up_path %>
+
+          <% end %>
+
+        </li>
+        <li>
+
+
+        </li>
+        <li class="dropdown" style="display:inline-block; margin-top: 10px">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+            Messages
+            <span class="caret"></span>
+          </button>
+          <ul id="messagesmenu" class="dropdown-menu" role="menu" aria-labelledby="Messages">
+            <li role="presentation"><a role="menuitem" tabindex="-1">Getting Messages...</a></li>
+          </ul>
+        </li>
+        <li class="dropdown" style="display:inline-block; margin-top: 10px">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
+            Notifications
+            <span class="caret"></span>
+          </button>
+          <ul id="notificationsmenu" class="dropdown-menu" role="menu" aria-labelledby="Messages">
+            <li role="presentation"><a role="menuitem" tabindex="-1">Getting Notifications...</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+
 <div id="user_nav">
+
   <% if current_user %>
     Logged in as <%= current_user.email %>
     <%= link_to "Log out", log_out_path %>
@@ -76,24 +117,77 @@
       <%= yield %>
     </div>
 
-    <div class="col-lg-3">
-      <div class="well sidebar-nav">
-        <h3>Sidebar</h3>
-        <ul class="nav nav-list">
-          <li class="nav-header">Sidebar</li>
-          <li><%= link_to "Link1", "/path1"  %></li>
-          <li><%= link_to "Link2", "/path2"  %></li>
-          <li><%= link_to "Link3", "/path3"  %></li>
-        </ul>
-      </div><!--/.well -->
-    </div><!--/span-->
   </div><!--/row-->
+    <div id="testresult">
 
+    </div>
   <footer>
     <p>&copy; Company 2015</p>
   </footer>
 
 </div> <!-- /container -->
 
+<script>
+
+    $(document).ready(function(){
+        $("#dropdownMenu1").click(function(){
+            $.ajax({url: "<%= usermessages_getmymessages_path%>.json", success: function(result){
+                var messagesmenu = document.getElementById("messagesmenu");
+                messagesmenu.innerHTML=""
+                for (var messageCounter=0; messageCounter<result.length; messageCounter++){
+                    var messageItem = document.createElement("li");
+                    messageItem.setAttribute("role","presentation");
+                    var messageLink = document.createElement("a");
+                    var linkText = document.createTextNode(result[messageCounter].body);
+
+                    messageLink.appendChild(linkText);
+                    messageLink.setAttribute("role","menuitem");
+                    messageLink.setAttribute("tabindex","-1");
+                    messageLink.setAttribute("href","/usermessages/show/" + result[messageCounter].id);
+                    messageItem.appendChild(messageLink);
+                    if(result[messageCounter].seen ==  0){
+                        var newmessageText = document.createTextNode(" New");
+                        messageLink.appendChild(newmessageText);
+                    }
+                    messagesmenu.appendChild(messageItem);
+                }
+                console.log(result[0].title);
+            }});
+        });
+
+
+        $("#dropdownMenu2").click(function(){
+            $.ajax({url: "<%= notifications_getusernotification_path%>.json", success: function(result){
+                var notificationsmenu = document.getElementById("notificationsmenu");
+                notificationsmenu.innerHTML=""
+                for (var notificationCounter=0; notificationCounter<result.length; notificationCounter++){
+                    var notificationItem = document.createElement("li");
+                    notificationItem.setAttribute("role","presentation");
+                    var notificationLink = document.createElement("a");
+                    var notificationText = document.createTextNode(result[notificationCounter].body);
+
+                    notificationLink.appendChild(notificationText);
+                    notificationLink.setAttribute("role","menuitem");
+                    notificationLink.setAttribute("tabindex","-1");
+                    notificationLink.setAttribute("href",result[notificationCounter].url);
+                    notificationItem.appendChild(notificationLink);
+                    if(result[notificationCounter].seen ==  0){
+                        var newmessageText = document.createTextNode(" New");
+                        notificationLink.appendChild(newmessageText);
+                    }
+                    notificationsmenu.appendChild(notificationItem);
+                }
+                console.log(result[0].body);
+            }});
+        });
+
+
+
+    });
+
+
+</script>
 </body>
 </html>
+
+

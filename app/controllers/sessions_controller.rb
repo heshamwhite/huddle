@@ -15,7 +15,9 @@ class SessionsController < ApplicationController
       session[:user_isconfirm] = user.isconfirm
       session[:user_usertype] = user.usertype
       session[:user_interestid] = user.interest_id
-      session[:user_image] = user.avatar_file_name
+      session[:user_image] = user.avatar
+      session[:latitude] = user.latitude
+      session[:longitude] = user.longitude
 
 
       redirect_to "/users", :notice => "Logged in!"

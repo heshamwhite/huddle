@@ -1,0 +1,20 @@
+
+<% ugformurl =  groups_uploadgroupimages_path  %>
+<%= form_for(@group, :url=> ugformurl , :html => { :multipart => true }) do |f| %>
+    <div class="field">
+      <%= f.label :name %><br>
+      <%= f.text_field :name %>
+    </div>
+
+    <div class="field">
+      <%= f.hidden_field :id, :value => @group.id %>
+    </div>
+        <div class="field">
+          <%= f.label :gimage %><br>
+          <%= f.file_field :gimage, :multiple => true, name: "groupimages[gimage][]" %>
+        </div>
+
+    <div class="actions">
+      <%= f.submit %>
+    </div>
+<% end %>
