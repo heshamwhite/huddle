@@ -37,29 +37,51 @@
   <%= javascript_include_tag "application" %>
 </head>
 <body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/welcome/index">Huddle</a>
+    </div>
 
-<div class="navbar navbar-default navbar-static-top">
-
-  <div class="container">
-    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>
-    <a class="navbar-brand" href="#">Huddle</a>
-    <div class="navbar-collapse collapse navbar-responsive-collapse">
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li><%= link_to "Link1", "/path1"  %></li>
-        <li><%= link_to "Link2", "/path2"  %></li>
-        <li><%= link_to "Link3", "/path3"  %></li>
+        <li class="active"><a href="/groups/new">Create Group <span class="sr-only">(current)</span></a></li>
+        <li><a href="/users/editprofile">Edit Profile</a></li>
+
       </ul>
-      <ul class="nav navbar-nav">
-        <% if logged_in? %>
-            Hello, <%=current_user.username%>
-        <% else %>
-            Hello Stranger
-        <% end %>
-        <div class="dropdown" style="display:inline-block; margin-top: 10px">
+
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+
+          <% if current_user %>
+              <a href="/users/profilepage" >Hello, <%=current_user.username%></a>
+
+          <% else %>
+              <%= link_to "Sign up", sign_up_path %>
+
+          <% end %>
+
+        </li>
+        <li>
+
+          <% if current_user %>
+
+              <%= link_to "Log out", log_out_path %>
+          <% else %>
+
+              <%= link_to "Log in", log_in_path %>
+          <% end %>
+
+        </li>
+        <li class="dropdown" style="display:inline-block; margin-top: 10px">
           <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
             Messages
             <span class="caret"></span>
@@ -67,8 +89,8 @@
           <ul id="messagesmenu" class="dropdown-menu" role="menu" aria-labelledby="Messages">
             <li role="presentation"><a role="menuitem" tabindex="-1">Getting Messages...</a></li>
           </ul>
-        </div>
-        <div class="dropdown" style="display:inline-block; margin-top: 10px">
+        </li>
+        <li class="dropdown" style="display:inline-block; margin-top: 10px">
           <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
             Notifications
             <span class="caret"></span>
@@ -76,22 +98,15 @@
           <ul id="notificationsmenu" class="dropdown-menu" role="menu" aria-labelledby="Messages">
             <li role="presentation"><a role="menuitem" tabindex="-1">Getting Notifications...</a></li>
           </ul>
-        </div>
-
-
+        </li>
       </ul>
-    </div>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
 
-  </div>
-</div>
+
 <div id="user_nav">
-  <% if current_user %>
-    Logged in as <%= current_user.email %>
-    <%= link_to "Log out", log_out_path %>
-  <% else %>
-    <%= link_to "Sign up", sign_up_path %> or 
-    <%= link_to "Log in", log_in_path %>
-  <% end %>
+
 </div>
 
 <div class="container">
@@ -101,17 +116,6 @@
       <%= yield %>
     </div>
 
-    <div class="col-lg-3">
-      <div class="well sidebar-nav">
-        <h3>Sidebar</h3>
-        <ul class="nav nav-list">
-          <li class="nav-header">Sidebar</li>
-          <li><%= link_to "Link1", "/path1"  %></li>
-          <li><%= link_to "Link2", "/path2"  %></li>
-          <li><%= link_to "Link3", "/path3"  %></li>
-        </ul>
-      </div><!--/.well -->
-    </div><!--/span-->
   </div><!--/row-->
     <div id="testresult">
 

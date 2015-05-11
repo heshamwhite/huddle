@@ -1,114 +1,100 @@
+
+
+<% if current_user %>
+
+    <div role="tabpanel">
+
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Search Nearby Groups</a></li>
+        <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Search Group Interests</a></li>
+      </ul>
+
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="home">
+
+          <div>
+            <form class="form-inline" method="GET" action=<%= groups_searchnearest_path %>  >
+              <div class="form-group">
+                <label class="sr-only" for="exampleInputAmount">10</label>
+                <div class="input-group">
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-search"></span>
+                  </div>
+                  <input type="number" class="form-control" id="distance" name="distance" placeholder="Radius">
+                  <input type="hidden" id="search_lat" name="search_lat" value="<%= session[:latitude] %>" >
+                  <input type="hidden" id="search_lng" name="search_lng" value="<%= session[:longitude] %>" >
+                  <div class="input-group-addon">KMs</div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+          </div>
+
+        </div>
+        <div role="tabpanel" class="tab-pane" id="profile">
+
+
+          <div>
+            <form class="form-inline" method="GET" action= <%= groups_searchstr_path %> >
+              <div class="form-group">
+                <label class="sr-only" for="exampleInputAmount">Enter Keywords</label>
+                <div class="input-group">
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-search"></span>
+                  </div>
+                  <input type="text" class="form-control" id="exampleInputAmount" name="searchstr" placeholder="Art">
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+        $('#myTab a').click(function (e) {
+            e.preventDefault()
+            $(this).tab('show')
+        })
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(changeposition);
+            } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        function changeposition(position) {
+            console.log("you are at lat: "+document.getElementById("search_lat").value + "and lng: "+ document.getElementById("search_lng").value );
+            console.log("you are at lat: "+position.coords.latitude + "and lng: "+ position.coords.longitude );
+            document.getElementById("search_lat").value =  position.coords.latitude;
+            document.getElementById("search_lng").value =  position.coords.longitude;
+        }
+
+        getLocation();
+    </script>
+
+
+<% end %>
 <h1>Welcome to Huddle</h1>
-
-<div role="tabpanel">
-
-  <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Search Nearby Groups</a></li>
-    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Search Group Interests</a></li>
-  </ul>
-
-  <!-- Tab panes -->
-  <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="home">
-
-      <div>
-        <form class="form-inline" method="GET" action=<%= groups_searchnearest_path %>  >
-          <div class="form-group">
-            <label class="sr-only" for="exampleInputAmount">10</label>
-            <div class="input-group">
-              <div class="input-group-addon">
-                <span class="glyphicon glyphicon-search"></span>
-              </div>
-              <input type="number" class="form-control" id="distance" name="distance" placeholder="Radius">
-              <input type="hidden" id="search_lat" name="search_lat" value="<%= @myuser.latitude %>" >
-              <input type="hidden" id="search_lng" name="search_lng" value="<%= @myuser.longitude %>" >
-              <div class="input-group-addon">KMs</div>
-            </div>
-          </div>
-          <button type="submit" class="btn btn-primary">Search</button>
-        </form>
-      </div>
-
-    </div>
-    <div role="tabpanel" class="tab-pane" id="profile">
+<br/>
 
 
-      <div>
-        <form class="form-inline" method="GET" action= <%= groups_searchstr_path %> >
-          <div class="form-group">
-            <label class="sr-only" for="exampleInputAmount">Enter Keywords</label>
-            <div class="input-group">
-              <div class="input-group-addon">
-                <span class="glyphicon glyphicon-search"></span>
-              </div>
-              <input type="text" class="form-control" id="exampleInputAmount" name="searchstr" placeholder="Art">
-            </div>
-          </div>
-          <button type="submit" class="btn btn-primary">Search</button>
-        </form>
-      </div>
-
-
-    </div>
+<div class="row">
+  <% @groups.each do |group| %>
+  <div class="col-xs-6 col-md-3">
+    <a href="/groups/<%= group.id %>" class="thumbnail">
+      <img src="<%= group.groupavatar.url %>" alt="<%= group.name %>" style="width: 300px; height: 200px">
+    </a>
+    <center><%= group.name %> </center>
   </div>
 
-</div>
-<script>
-    $('#myTab a').click(function (e) {
-        e.preventDefault()
-        $(this).tab('show')
-    })
-
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(changeposition);
-        } else {
-            x.innerHTML = "Geolocation is not supported by this browser.";
-        }
-    }
-
-    function changeposition(position) {
-        console.log("you are at lat: "+document.getElementById("search_lat").value + "and lng: "+ document.getElementById("search_lng").value );
-        console.log("you are at lat: "+position.coords.latitude + "and lng: "+ position.coords.longitude );
-        document.getElementById("search_lat").value =  position.coords.latitude;
-        document.getElementById("search_lng").value =  position.coords.longitude;
-    }
-
-    getLocation();
-</script>
-
-
-
-
-
-<br/>
-<table>
-  <thead>
-  <tr>
-    <th>Name</th>
-    <th>Lat</th>
-    <th>Log</th>
-    <th>Desc</th>
-    <th>Membertitle</th>
-    <th>User</th>
-    <th colspan="3"></th>
-  </tr>
-  </thead>
-
-  <tbody>
-  <% @groups.each do |group| %>
-      <tr>
-        <td><%= group.name %></td>
-        <td><%= group.lat %></td>
-        <td><%= group.log %></td>
-        <td><%= group.desc %></td>
-        <td><%= group.membertitle %></td>
-        <td><%= group.user %></td>
-        <td><%= link_to 'Show', group %></td>
-        <td><%= link_to 'Edit', edit_group_path(group) %></td>
-        <td><%= link_to 'Destroy', group, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
   <% end %>
-  </tbody>
-</table>
+</div>
