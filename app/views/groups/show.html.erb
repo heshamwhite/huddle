@@ -189,22 +189,26 @@
         $.get( "/groups/<%= @group.id %>/images.json",function (data){
                     $("#content").html(" ");
                     $("#content").append("<h1>Images</h1><br>")
+
+
+
+                    disp = $('<div class="row"> </div>')
                     for(i=0;i<data.length;i++)
                     {
 
-                        link = $("<a href='"+data[i].img+"'></a>")
-                        link.append(" <img src='"+data[i].thumb+"' with='70' height='70' > ")
+                        link = $("<a href='"+data[i].img+"' class='thumbnail'></a>")
+                        link.append('<img src="'+data[i].img+'"  style="width: 300px; height: 200px">')
 
                         current = $("<div>");
                         current.append(link)
 
-                        current.attr("class","well col-xs-2")
+                        current.attr("class","col-xs-6 col-md-3")
 
-                        $("#content").append(current)
+                        disp.append(current)
 
                     }
 
-
+                    $("#content").append(disp)
                 }
                 ,"json"
         )
