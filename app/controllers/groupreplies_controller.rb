@@ -4,7 +4,7 @@ class GrouprepliesController < ApplicationController
   # GET /groupreplies
   # GET /groupreplies.json
   def index
-    @groupreplies = Groupreply.all
+    @groupreplies = Groupreply.where("groupmessage_id = ?", params[:groupmessage_id])
   end
 
   # GET /groupreplies/1
@@ -24,7 +24,12 @@ class GrouprepliesController < ApplicationController
   # POST /groupreplies
   # POST /groupreplies.json
   def create
-    @groupreply = Groupreply.new(groupreply_params)
+    mygroupreplay = Hash.new
+    mygroupreplay[:body] = params[:body]
+    mygroupreplay[:user_id] = params[:user_id]
+    mygroupreplay[:groupmessage_id] = params[:groupmessage_id]
+    #render plain:  params[:body]
+    @groupreply = Groupreply.new(mygroupreplay)
 
     respond_to do |format|
       if @groupreply.save
