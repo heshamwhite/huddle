@@ -11,8 +11,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+ActiveRecord::Schema.define(version: 20150511154632) do
 
-ActiveRecord::Schema.define(version: 20150509103133) do
+  create_table "authorizations", force: :cascade do |t|
+    t.string   "provider",   limit: 255
+    t.string   "uid",        limit: 255
+    t.integer  "user_id",    limit: 4
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  create_table "confirms", force: :cascade do |t|
+    t.text     "confirmtext", limit: 65535
+    t.integer  "user_id",     limit: 4
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  add_index "confirms", ["user_id"], name: "index_confirms_on_user_id", using: :btree
 
   create_table "eventcomments", force: :cascade do |t|
     t.text     "body",       limit: 65535
@@ -65,8 +81,8 @@ ActiveRecord::Schema.define(version: 20150509103133) do
 
   create_table "groups", force: :cascade do |t|
     t.string   "name",                     limit: 255
-    t.float    "lat",                      limit: 53
-    t.float    "log",                      limit: 53
+    t.float    "lat",                      limit: 24
+    t.float    "log",                      limit: 24
     t.text     "desc",                     limit: 65535
     t.string   "membertitle",              limit: 255
     t.integer  "user_id",                  limit: 4
@@ -121,22 +137,28 @@ ActiveRecord::Schema.define(version: 20150509103133) do
     t.integer  "age",                 limit: 4
     t.text     "bio",                 limit: 65535
     t.string   "email",               limit: 255
-    t.integer  "isconfirm",           limit: 4
-    t.integer  "usertype",            limit: 4
+    t.integer  "isconfirm",           limit: 4,     default: 0
+    t.integer  "usertype",            limit: 4,     default: 0
     t.integer  "interest_id",         limit: 4
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
     t.string   "avatar_file_name",    limit: 255
     t.string   "avatar_content_type", limit: 255
     t.integer  "avatar_file_size",    limit: 4
     t.datetime "avatar_updated_at"
     t.string   "password_salt",       limit: 255
+    t.string   "provider",            limit: 255
+    t.string   "uid",                 limit: 255
+    t.string   "name",                limit: 255
+    t.string   "oauth_token",         limit: 255
+    t.datetime "oauth_expires_at"
     t.float    "latitude",            limit: 24
     t.float    "longitude",           limit: 24
   end
 
   add_index "users", ["interest_id"], name: "index_users_on_interest_id", using: :btree
 
+  add_foreign_key "confirms", "users"
   add_foreign_key "eventcomments", "events"
   add_foreign_key "eventcomments", "users"
   add_foreign_key "events", "groups"

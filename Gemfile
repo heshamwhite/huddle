@@ -44,6 +44,9 @@ group :development, :test do
 
 
   #Additional Gems
+
+  gem "json", '1.8.1'
+
   gem "twitter-bootstrap-rails"
 
   gem "paperclip", "~> 4.2"
@@ -61,8 +64,11 @@ group :development, :test do
 gem 'bcrypt', :require => 'bcrypt' 
 
   gem "mysql"
+gem 'omniauth'
 
   gem 'geokit-rails'
+  gem 'omniauth-facebook'
+
 
   ############################################
 end

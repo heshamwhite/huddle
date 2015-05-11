@@ -1,10 +1,15 @@
 class GroupsController < ApplicationController
-  before_action :set_group, only: [:show, :edit, :update, :destroy]
+  before_action :set_group, :isadmin?, only: [:show, :edit, :update, :destroy]
 
   # GET /groups
   # GET /groups.json
   def index
+     if isadmin?
     @groups = Group.all
+    else
+       redirect_to :controller =>'welcome', :action=> 'index'
+
+     end
   end
 
   # GET /groups/1
@@ -58,6 +63,7 @@ class GroupsController < ApplicationController
   # PATCH/PUT /groups/1
   # PATCH/PUT /groups/1.json
   def update
+     if isadmin?
     respond_to do |format|
       if @group.update(group_params)
         format.html { redirect_to @group, notice: 'Group was successfully updated.' }
@@ -67,16 +73,25 @@ class GroupsController < ApplicationController
         format.json { render json: @group.errors, status: :unprocessable_entity }
       end
     end
+    else
+       redirect_to :controller =>'welcome', :action=> 'index'
+
+     end
   end
 
   # DELETE /groups/1
   # DELETE /groups/1.json
   def destroy
+     if isadmin?
     @group.destroy
     respond_to do |format|
       format.html { redirect_to groups_url, notice: 'Group was successfully destroyed.' }
       format.json { head :no_content }
     end
+    else
+       redirect_to :controller =>'welcome', :action=> 'index'
+
+     end
   end
 
   private
@@ -84,6 +99,9 @@ class GroupsController < ApplicationController
     def set_group
       @group = Group.find(params[:id])
     end
+    def isadmin?
+  session[:user_usertype] ==1 
+end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def group_params

@@ -1,10 +1,15 @@
 class GroupimagesController < ApplicationController
-  before_action :set_groupimage, only: [:show, :edit, :update, :destroy]
+  before_action :set_groupimage, :isadmin?, only: [:show, :edit, :update, :destroy]
 
   # GET /groupimages
   # GET /groupimages.json
   def index
+     if isadmin?
     @groupimages = Groupimage.all
+    else
+       redirect_to :controller =>'welcome', :action=> 'index'
+
+     end
   end
 
   # GET /groupimages/1
@@ -40,6 +45,7 @@ class GroupimagesController < ApplicationController
   # PATCH/PUT /groupimages/1
   # PATCH/PUT /groupimages/1.json
   def update
+     if isadmin?
     respond_to do |format|
       if @groupimage.update(groupimage_params)
         format.html { redirect_to @groupimage, notice: 'Groupimage was successfully updated.' }
@@ -49,16 +55,25 @@ class GroupimagesController < ApplicationController
         format.json { render json: @groupimage.errors, status: :unprocessable_entity }
       end
     end
+    else
+       redirect_to :controller =>'welcome', :action=> 'index'
+
+     end
   end
 
   # DELETE /groupimages/1
   # DELETE /groupimages/1.json
   def destroy
+     if isadmin?
     @groupimage.destroy
     respond_to do |format|
       format.html { redirect_to groupimages_url, notice: 'Groupimage was successfully destroyed.' }
       format.json { head :no_content }
     end
+    else
+       redirect_to :controller =>'welcome', :action=> 'index'
+
+     end
   end
 
   private
@@ -66,6 +81,10 @@ class GroupimagesController < ApplicationController
     def set_groupimage
       @groupimage = Groupimage.find(params[:id])
     end
+    
+    def isadmin?
+  session[:user_usertype] ==1 
+end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def groupimage_params

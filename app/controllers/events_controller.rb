@@ -1,10 +1,15 @@
 class EventsController < ApplicationController
-  before_action :set_event, only: [:show, :edit, :update, :destroy]
+  before_action :set_event, :isadmin?, only: [:show, :edit, :update, :destroy]
 
   # GET /events
   # GET /events.json
   def index
+     if isadmin?
     @events = Event.all
+    else
+       redirect_to :controller =>'welcome', :action=> 'index'
+
+     end
   end
 
   # GET /events/1
@@ -40,6 +45,7 @@ class EventsController < ApplicationController
   # PATCH/PUT /events/1
   # PATCH/PUT /events/1.json
   def update
+     if isadmin?
     respond_to do |format|
       if @event.update(event_params)
         format.html { redirect_to @event, notice: 'Event was successfully updated.' }
@@ -49,16 +55,25 @@ class EventsController < ApplicationController
         format.json { render json: @event.errors, status: :unprocessable_entity }
       end
     end
+    else
+       redirect_to :controller =>'welcome', :action=> 'index'
+
+     end
   end
 
   # DELETE /events/1
   # DELETE /events/1.json
   def destroy
+     if isadmin?
     @event.destroy
     respond_to do |format|
       format.html { redirect_to events_url, notice: 'Event was successfully destroyed.' }
       format.json { head :no_content }
     end
+    else
+       redirect_to :controller =>'welcome', :action=> 'index'
+
+     end
   end
 
   private
@@ -66,6 +81,9 @@ class EventsController < ApplicationController
     def set_event
       @event = Event.find(params[:id])
     end
+    def isadmin?
+  session[:user_usertype] ==1 
+end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def event_params

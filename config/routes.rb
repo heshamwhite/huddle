@@ -1,8 +1,11 @@
 Rails.application.routes.draw do
   get 'groups/searchnearest'
   get 'groups/searchstr'
-
-
+  get 'users/ :id/ :mystring', to: 'users#confirm'
+# get 'auth/:provider/callback', to: 'sessions#create'
+#   get 'auth/failure', to: redirect('/')
+#   get 'signout', to: 'sessions#destroy', as: 'signout'
+  
   get 'sessions/new'
   get "log_in" => "sessions#new", :as => "log_in"
 get "log_out" => "sessions#destroy", :as => "log_out"
