@@ -23,7 +23,14 @@ Rails.application.routes.draw do
   resources :groupmessages
   resources :eventcomments
   resources :groupimages
-  resources :events
+  resources :events do
+    member do
+
+      get :membership, :as => 'membership'
+      get :memberjoin, :as => 'memberjoin'
+
+    end
+  end
   #resources :groups
   resources :groups do
     member do
