@@ -21,6 +21,15 @@ class NotificationsController < ApplicationController
   def edit
   end
 
+  def getusernotification
+    #@notifications = Notification.find_by_user_id(session[:user_id])
+    @notifications= Notification.where(user_id: session[:user_id])
+    respond_to do |format|  ## Add this
+      format.json {render :json => @notifications, status: :ok}
+      ## Other format
+    end
+  end
+
   # POST /notifications
   # POST /notifications.json
   def create

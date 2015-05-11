@@ -64,7 +64,7 @@ group :development, :test do
 
   gem 'geokit-rails'
 
-
+  gem 'carrierwave'
 
   ############################################
 end

@@ -15,13 +15,26 @@ class UsermessagesController < ApplicationController
     usermsg_values[:receiver] = User.find(usermsg_values[:receiver])
     @usermessage = Usermessage.new(usermsg_values)
     @usermessage.save
-    render plain: "OK"
+    @user =  usermsg_values[:receiver]
+    redirect_to @user, notice: 'Message was successfully sent.'
   end
 
   def show
-
+    @usermessage = Usermessage.find(params[:id])
+    @sender = User.find(@usermessage.sender)
   end
+  def getmymessages
+    @user = User.find(session[:user_id])
+    @usermessages = Usermessage.where(receiver_id: session[:user_id] )
+    #format.json { render plain, status: :created, location: @user }
+    #format.json { render :json => @usermessages }
 
+    respond_to do |format|  ## Add this
+      format.json {render :json => @usermessages, status: :ok}
+      format.html
+      ## Other format
+    end                    ## Add this
+  end
   private
   def usermessage_params
     params.require(:usermessage).permit(:title, :body, :receiver)

@@ -10,6 +10,7 @@ class GroupmessagesController < ApplicationController
   # GET /groupmessages/1
   # GET /groupmessages/1.json
   def show
+
   end
 
   # GET /groupmessages/new
@@ -75,4 +76,5 @@ class GroupmessagesController < ApplicationController
     def groupmessage_params
       params.require(:groupmessage).permit(:title, :body, :user_id, :group_id)
     end
+
 end

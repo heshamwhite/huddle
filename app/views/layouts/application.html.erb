@@ -38,8 +38,6 @@
 </head>
 <body>
 
-
-
 <div class="navbar navbar-default navbar-static-top">
 
   <div class="container">
@@ -55,7 +53,35 @@
         <li><%= link_to "Link2", "/path2"  %></li>
         <li><%= link_to "Link3", "/path3"  %></li>
       </ul>
+      <ul class="nav navbar-nav">
+        <% if logged_in? %>
+            Hello, <%=current_user.username%>
+        <% else %>
+            Hello Stranger
+        <% end %>
+        <div class="dropdown" style="display:inline-block; margin-top: 10px">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+            Messages
+            <span class="caret"></span>
+          </button>
+          <ul id="messagesmenu" class="dropdown-menu" role="menu" aria-labelledby="Messages">
+            <li role="presentation"><a role="menuitem" tabindex="-1">Getting Messages...</a></li>
+          </ul>
+        </div>
+        <div class="dropdown" style="display:inline-block; margin-top: 10px">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
+            Notifications
+            <span class="caret"></span>
+          </button>
+          <ul id="notificationsmenu" class="dropdown-menu" role="menu" aria-labelledby="Messages">
+            <li role="presentation"><a role="menuitem" tabindex="-1">Getting Notifications...</a></li>
+          </ul>
+        </div>
+
+
+      </ul>
     </div>
+
   </div>
 </div>
 <div id="user_nav">
@@ -87,12 +113,76 @@
       </div><!--/.well -->
     </div><!--/span-->
   </div><!--/row-->
+    <div id="testresult">
 
+    </div>
   <footer>
     <p>&copy; Company 2015</p>
   </footer>
 
 </div> <!-- /container -->
 
+<script>
+
+    $(document).ready(function(){
+        $("#dropdownMenu1").click(function(){
+            $.ajax({url: "<%= usermessages_getmymessages_path%>.json", success: function(result){
+                var messagesmenu = document.getElementById("messagesmenu");
+                messagesmenu.innerHTML=""
+                for (var messageCounter=0; messageCounter<result.length; messageCounter++){
+                    var messageItem = document.createElement("li");
+                    messageItem.setAttribute("role","presentation");
+                    var messageLink = document.createElement("a");
+                    var linkText = document.createTextNode(result[messageCounter].body);
+
+                    messageLink.appendChild(linkText);
+                    messageLink.setAttribute("role","menuitem");
+                    messageLink.setAttribute("tabindex","-1");
+                    messageLink.setAttribute("href","/usermessages/show/" + result[messageCounter].id);
+                    messageItem.appendChild(messageLink);
+                    if(result[messageCounter].seen ==  0){
+                        var newmessageText = document.createTextNode(" New");
+                        messageLink.appendChild(newmessageText);
+                    }
+                    messagesmenu.appendChild(messageItem);
+                }
+                console.log(result[0].title);
+            }});
+        });
+
+
+        $("#dropdownMenu2").click(function(){
+            $.ajax({url: "<%= notifications_getusernotification_path%>.json", success: function(result){
+                var notificationsmenu = document.getElementById("notificationsmenu");
+                notificationsmenu.innerHTML=""
+                for (var notificationCounter=0; notificationCounter<result.length; notificationCounter++){
+                    var notificationItem = document.createElement("li");
+                    notificationItem.setAttribute("role","presentation");
+                    var notificationLink = document.createElement("a");
+                    var notificationText = document.createTextNode(result[notificationCounter].body);
+
+                    notificationLink.appendChild(notificationText);
+                    notificationLink.setAttribute("role","menuitem");
+                    notificationLink.setAttribute("tabindex","-1");
+                    notificationLink.setAttribute("href",result[notificationCounter].url);
+                    notificationItem.appendChild(notificationLink);
+                    if(result[notificationCounter].seen ==  0){
+                        var newmessageText = document.createTextNode(" New");
+                        notificationLink.appendChild(newmessageText);
+                    }
+                    notificationsmenu.appendChild(notificationItem);
+                }
+                console.log(result[0].body);
+            }});
+        });
+
+
+
+    });
+
+
+</script>
 </body>
 </html>
+
+
