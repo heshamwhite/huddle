@@ -7,6 +7,10 @@ Rails.application.routes.draw do
   get "log_in" => "sessions#new", :as => "log_in"
   get "log_out" => "sessions#destroy", :as => "log_out"
   get "sign_up" => "users#new", :as => "sign_up"
+  get "usermessages" => "usermessages#create"
+  get "usermessages/getmymessages" => "usermessages#getmymessages"
+  get "usermessages/show/:id" => "usermessages#show"
+  post "usermessages/create" => "usermessages#create", :as => "usermessages/create"
   root :to => "users#new"
 
   resources :groupmessages

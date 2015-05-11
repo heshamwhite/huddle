@@ -16,6 +16,7 @@ class UsersController < ApplicationController
   # GET /users/1
   # GET /users/1.json
   def show
+    @usermessage = Usermessage.new
     @a=[]
        
     interestsuser = Interests_User.where(user_id: @user.interest_id)

@@ -45,5 +45,42 @@
   <%= image_tag @user.avatar.url %>
 </p>
 
+
+
+
+<%= form_for(@usermessage , :url=> usermessages_create_path) do |f| %>
+    <% if @usermessage.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@usermessage.errors.count, "error") %> prohibited this user from sending message:</h2>
+
+          <ul>
+            <% @usermessage.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+    <% end %>
+
+    <div class="field">
+      <%= f.label :title %><br>
+      <%= f.text_field :title, :placeholder => "Title" %>
+    </div>
+
+    <div class="field">
+      <%= f.label :body %><br>
+      <%= f.text_area :body, :placeholder => "Message" %>
+    </div>
+
+    <div class="field">
+      <%= f.hidden_field :receiver, :value => @user.id %>
+    </div>
+    <div class="actions">
+      <%= f.submit %>
+    </div>
+<% end %>
+
+
+
+
 <%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', users_path %>
