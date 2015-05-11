@@ -33,6 +33,20 @@ class GroupmessagesController < ApplicationController
 
     respond_to do |format|
       if @groupmessage.save
+
+        @group = Group.find(groupmessage_params[:group_id])
+        @users = @group.user
+
+        @users.each do |currentuser|
+          data = Hash.new
+          data[:body] = "New Message in Group " + @group.name
+          data[:url] = "/groups/" + @group.id.to_s
+          data[:notificationtype] = "newmessage"
+          data[:user_id] = currentuser.id
+          notification = Notification.create(data)
+          notification.save
+        end
+
         format.html { redirect_to @groupmessage, notice: 'Groupmessage was successfully created.' }
         format.json { render :show, status: :created, location: @groupmessage }
       else

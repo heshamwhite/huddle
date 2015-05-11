@@ -31,8 +31,34 @@ class GrouprepliesController < ApplicationController
     #render plain:  params[:body]
     @groupreply = Groupreply.new(mygroupreplay)
 
+
+    @groupmessage = Groupmessage.find(mygroupreplay[:groupmessage_id])
+   # @user = User.find(@groupmessage.user)
+    data = Hash.new
+    data[:body] = "There is a comment on your Message " + @groupmessage.title
+    data[:url] = "/groups/" + mygroupreplay[:groupmessage_id].to_s
+    data[:notificationtype] = "groupmessagecomment"
+    data[:user_id] = @groupmessage.user.id
+    notification = Notification.create(data)
+    notification.save
+
+    @replayies = @groupmessage.groupreplies
+
     respond_to do |format|
       if @groupreply.save
+
+        @replayies.each do |currentreplay|
+          data = Hash.new
+          data[:body] = "There is a comment on your Message " + @groupmessage.title
+          data[:url] = "/groupmessages/" + @groupmessage.id.to_s
+          data[:notificationtype] = "groupmessagecomment"
+          data[:user_id] = currentreplay.user.id
+          notification = Notification.create(data)
+          notification.save
+        end
+
+
+
         format.html { redirect_to @groupreply, notice: 'Groupreply was successfully created.' }
         format.json { render :show, status: :created, location: @groupreply }
       else

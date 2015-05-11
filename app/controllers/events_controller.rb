@@ -29,21 +29,23 @@ class EventsController < ApplicationController
   def create
     @event = Event.new(event_params)
 
-    @group = Group.find(event_params[:group_id])
-    @users = @group.user
 
-    @users.each do |currentuser|
-      data = Hash.new
-      data[:body] = "New Event in Group " + @group.name
-      data[:url] = "/groups/" + @group.id
-      data[:notificationtype] = "newevent"
-      data[:user_id] = currentuser.id
-      notification = Notification.create(data)
-      notification.save
-    end
 
     respond_to do |format|
       if @event.save
+        @group = Group.find(event_params[:group_id])
+        @users = @group.user
+
+        @users.each do |currentuser|
+          data = Hash.new
+          data[:body] = "New Event in Group " + @group.name
+          data[:url] = "/events/" + @event.id.to_s
+          data[:notificationtype] = "newevent"
+          data[:user_id] = currentuser.id
+          notification = Notification.create(data)
+          notification.save
+        end
+
         format.html { redirect_to @event, notice: 'Event was successfully created.' }
         format.json { render :show, status: :created, location: @event }
       else
