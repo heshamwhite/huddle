@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150510192534) do
+ActiveRecord::Schema.define(version: 20150511062730) do
 
   create_table "eventcomments", force: :cascade do |t|
     t.text     "body",       limit: 65535
@@ -131,13 +131,13 @@ ActiveRecord::Schema.define(version: 20150510192534) do
   add_index "interests_users", ["user_id"], name: "index_interests_users_on_user_id", using: :btree
 
   create_table "notifications", force: :cascade do |t|
-    t.string   "body",       limit: 255
-    t.string   "url",        limit: 255
-    t.string   "type",       limit: 255
-    t.integer  "user_id",    limit: 4
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-    t.boolean  "seen",       limit: 1
+    t.string   "body",             limit: 255
+    t.string   "url",              limit: 255
+    t.string   "notificationtype", limit: 255
+    t.integer  "user_id",          limit: 4
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+    t.boolean  "seen",             limit: 1
   end
 
   add_index "notifications", ["user_id"], name: "index_notifications_on_user_id", using: :btree

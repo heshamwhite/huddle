@@ -1,9 +1,8 @@
 Rails.application.routes.draw do
-  resources :notifications
+
   resources :groupreplies
   get 'groups/searchnearest'
   get 'groups/searchstr'
-
 
   get 'sessions/new'
   get "log_in" => "sessions#new", :as => "log_in"
@@ -13,8 +12,14 @@ Rails.application.routes.draw do
   get "usermessages/getmymessages" => "usermessages#getmymessages"
   get "usermessages/show/:id" => "usermessages#show"
   post "usermessages/create" => "usermessages#create", :as => "usermessages/create"
-  root :to => "users#new"
-
+  patch "groups/uploadgroupimages/:id" => "groups#uploadgroupimages", :as => "groups/uploadgroupimages"
+  get "groups/newgroupimages/:id" => "groups#newgroupimages"
+  get "notifications/getusernotification" => "notifications#getusernotification"
+  get "users/profilepage" => "users#profilepage"
+  get "users/editprofile" => "users#editprofile"
+  patch "users/updateprofile" => "users#updateprofile"
+  root :to => "welcome#index"
+  resources :notifications
   resources :groupmessages
   resources :eventcomments
   resources :groupimages

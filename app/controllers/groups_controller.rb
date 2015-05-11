@@ -104,6 +104,18 @@ class GroupsController < ApplicationController
     end
   end
 
+  def uploadgroupimages
+    @group = Group.find(params[:id])
+    params[:groupimages]['gimage'].each do |a|
+      @groupimage = @group.groupimages.create!(:gimage => a, :group_id => @group.id)
+    end
+    render plain:"uploaded"
+  end
+
+  def newgroupimages
+    @group = Group.find(params[:id])
+  end
+
   # DELETE /groups/1
   # DELETE /groups/1.json
   def destroy
@@ -125,6 +137,11 @@ class GroupsController < ApplicationController
 
     def group_params
       params.require(:group).permit(:name, :lat, :log, :desc, :membertitle, :user_id, :interest)
+    end
+
+    def groupphoto_params
+      #params.require(:groupimage).permit(:group_id, :gimage)
+      params.require(:group).permit(:name, groupimages_attributes: [:id, :group_id, :gimage])
     end
 
 end

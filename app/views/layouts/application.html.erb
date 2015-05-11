@@ -38,8 +38,6 @@
 </head>
 <body>
 
-
-
 <div class="navbar navbar-default navbar-static-top">
 
   <div class="container">
@@ -58,6 +56,8 @@
       <ul class="nav navbar-nav">
         <% if logged_in? %>
             Hello, <%=current_user.username%>
+        <% else %>
+            Hello Stranger
         <% end %>
         <div class="dropdown" style="display:inline-block; margin-top: 10px">
           <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
@@ -66,16 +66,21 @@
           </button>
           <ul id="messagesmenu" class="dropdown-menu" role="menu" aria-labelledby="Messages">
             <li role="presentation"><a role="menuitem" tabindex="-1">Getting Messages...</a></li>
-
+          </ul>
+        </div>
+        <div class="dropdown" style="display:inline-block; margin-top: 10px">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
+            Notifications
+            <span class="caret"></span>
+          </button>
+          <ul id="notificationsmenu" class="dropdown-menu" role="menu" aria-labelledby="Messages">
+            <li role="presentation"><a role="menuitem" tabindex="-1">Getting Notifications...</a></li>
           </ul>
         </div>
 
+
       </ul>
     </div>
-
-
-
-
 
   </div>
 </div>
@@ -118,12 +123,6 @@
 </div> <!-- /container -->
 
 <script>
-//    $.ajax({
-//        url: "<%= usermessages_getmymessages_path %>",
-//        cache: false
-//    }).done(function( html ) {
-//                $( "#results" ).append( html );
-//            });
 
     $(document).ready(function(){
         $("#dropdownMenu1").click(function(){
@@ -150,6 +149,35 @@
                 console.log(result[0].title);
             }});
         });
+
+
+        $("#dropdownMenu2").click(function(){
+            $.ajax({url: "<%= notifications_getusernotification_path%>.json", success: function(result){
+                var notificationsmenu = document.getElementById("notificationsmenu");
+                notificationsmenu.innerHTML=""
+                for (var notificationCounter=0; notificationCounter<result.length; notificationCounter++){
+                    var notificationItem = document.createElement("li");
+                    notificationItem.setAttribute("role","presentation");
+                    var notificationLink = document.createElement("a");
+                    var notificationText = document.createTextNode(result[notificationCounter].body);
+
+                    notificationLink.appendChild(notificationText);
+                    notificationLink.setAttribute("role","menuitem");
+                    notificationLink.setAttribute("tabindex","-1");
+                    notificationLink.setAttribute("href",result[notificationCounter].url);
+                    notificationItem.appendChild(notificationLink);
+                    if(result[notificationCounter].seen ==  0){
+                        var newmessageText = document.createTextNode(" New");
+                        notificationLink.appendChild(newmessageText);
+                    }
+                    notificationsmenu.appendChild(notificationItem);
+                }
+                console.log(result[0].body);
+            }});
+        });
+
+
+
     });
 
 
