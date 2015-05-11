@@ -6,7 +6,10 @@
 <button onclick="loadEvents();" class="btn btn-default">
     Events
 </button >
-<%= link_to 'New Event', new_event_path(:group => @group) , {:class => 'btn btn-default'} %>
+
+<% if @ismember %>
+    <%= link_to 'New Event', new_event_path(:group => @group) , {:class => 'btn btn-default'} %>
+<% end %>
 <button onclick="loadMembers();" class="btn btn-default">
   Members
 </button >

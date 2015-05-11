@@ -19,6 +19,10 @@ class GroupsController < ApplicationController
       @a.push(@interest.interestname)
       logger.debug @a
     end
+
+    @user = User.find(session[:user_id])
+    @ismember = @group.user.include?(@user)
+
   end
 
   def searchnearest

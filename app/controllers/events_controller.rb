@@ -27,32 +27,40 @@ class EventsController < ApplicationController
   # POST /events
   # POST /events.json
   def create
-    @event = Event.new(event_params)
+    @group = Group.find(event_params[:group_id])
 
+    @user = User.find(session[:user_id])
+    @ismember = @group.user.include?(@user)
 
+    if @ismember
+      @event = Event.new(event_params)
 
-    respond_to do |format|
-      if @event.save
-        @group = Group.find(event_params[:group_id])
-        @users = @group.user
+      respond_to do |format|
+        if @event.save
+          @group = Group.find(event_params[:group_id])
+          @users = @group.user
 
-        @users.each do |currentuser|
-          data = Hash.new
-          data[:body] = "New Event in Group " + @group.name
-          data[:url] = "/events/" + @event.id.to_s
-          data[:notificationtype] = "newevent"
-          data[:user_id] = currentuser.id
-          notification = Notification.create(data)
-          notification.save
+          @users.each do |currentuser|
+            data = Hash.new
+            data[:body] = "New Event in Group " + @group.name
+            data[:url] = "/events/" + @event.id.to_s
+            data[:notificationtype] = "newevent"
+            data[:user_id] = currentuser.id
+            notification = Notification.create(data)
+            notification.save
+          end
+
+          format.html { redirect_to @event, notice: 'Event was successfully created.' }
+          format.json { render :show, status: :created, location: @event }
+        else
+          format.html { render :new }
+          format.json { render json: @event.errors, status: :unprocessable_entity }
         end
-
-        format.html { redirect_to @event, notice: 'Event was successfully created.' }
-        format.json { render :show, status: :created, location: @event }
-      else
-        format.html { render :new }
-        format.json { render json: @event.errors, status: :unprocessable_entity }
       end
+    else
+      render plain:"Unauthorized operation"
     end
+
   end
 
   # PATCH/PUT /events/1
