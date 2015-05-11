@@ -127,7 +127,7 @@ class UsersController < ApplicationController
         #@interest_users.save
       end
     end
-    redirect_to :controller => 'users', :action => 'profilepage'
+    render :controller => 'users', :action => 'profilepage'
   end
   # DELETE /users/1
   # DELETE /users/1.json

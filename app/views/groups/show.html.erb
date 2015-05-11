@@ -1,15 +1,22 @@
+<script src="http://maps.googleapis.com/maps/api/js"></script>
+
+<script>
+  document.getElementsByTagName("body")[0].setAttribute("background","<%= @group.bgimage.url %>")
+        console.log( document.getElementsByTagName("body")[0].getAttribute("background"))
+</script>
 <p id="notice"><%= notice %></p>
+<a href="/groups/<%= @group.id %>" class="btn btn-warning">Main Page</a>
 <button onclick="join();" id="join-button" class="btn btn-success">
   <span class="glyphicon glyphicon-plus"></span> Join
 </button >
-
+<% if @ismember %>
+    <%= link_to 'New Event + ', new_event_path(:group => @group) , {:class => 'btn btn-default'} %>
+<% end %>
 <button onclick="loadEvents();" class="btn btn-default">
     Events
 </button >
 
-<% if @ismember %>
-    <%= link_to 'New Event', new_event_path(:group => @group) , {:class => 'btn btn-default'} %>
-<% end %>
+
 <button onclick="loadMembers();" class="btn btn-default">
   Members
 </button >
@@ -19,48 +26,89 @@
 <button onclick="loadGroupImages();" class="btn btn-default">
   Group Images
 </button >
-<div id="content">
-e
+<a href="/groups/newgroupimages/<%= @group.id %>" class="btn btn-info">Add Images</a>
+
+<div id="content" style="padding:20px;background:rgba(255, 255, 255, .85);" >
+  <h1> <%= @group.name %> </h1>
+  <div class="row">
+    <div class="col-xs-6">
+      <img src="<%= @group.groupavatar.url(:medium) %>" />
+
+    </div>
+    <div class="col-xs-6">
+      <p>
+        <strong>Lat:</strong>
+        <%= @group.lat %>
+      </p>
+
+      <p>
+        <strong>Log:</strong>
+        <%= @group.log %>
+      </p>
+
+      <p>
+        <strong>Description:</strong>
+        <%= @group.desc %>
+      </p>
+
+      <p>
+        <strong>Membertitle:</strong>
+        <%= @group.membertitle %>
+      </p>
+
+
+      <p>
+        <strong>Interest:</strong>
+        <% @a.each do |p| %>
+            <%= p %>
+        <% end %>
+      </p>
+    </div>
+    <div class="row">
+      <div class="field col-xs-12" id="googleMap" style="width:90%;height:380px;margin: 40px;  border-style: solid; border-width: 1px; ">
+
+      </div>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
 </div>
-<p>
-  <strong>Name:</strong>
-  <%= @group.name %>
-</p>
 
-<p>
-  <strong>Lat:</strong>
-  <%= @group.lat %>
-</p>
-
-<p>
-  <strong>Log:</strong>
-  <%= @group.log %>
-</p>
-
-<p>
-  <strong>Desc:</strong>
-  <%= @group.desc %>
-</p>
-
-<p>
-  <strong>Membertitle:</strong>
-  <%= @group.membertitle %>
-</p>
-
-<p>
-  <strong>User:</strong>
-  <%= @group.user %>
-</p>
-
-<p>
-  <strong>Interest:</strong>
-  <% @a.each do |p| %>
-      <%= p %>
-  <% end %>
-</p>
 
 <%= link_to 'Edit', edit_group_path(@group) %> |
 <%= link_to 'Back', groups_path %>
+
+<script>
+    function initialize() {
+        var mylat = <%= @group.lat %>;
+        var mylng = <%= @group.log %>;
+        var mytitle = "<%= @group.name %>";
+        var xCenter=new google.maps.LatLng(mylat,mylng);
+        var mapProp = {
+            center:xCenter,
+            zoom:5,
+            mapTypeId:google.maps.MapTypeId.ROADMAP
+        };
+        var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+        var marker=new google.maps.Marker({
+            position: xCenter,
+            animation:google.maps.Animation.BOUNCE,
+            title: mytitle
+        });
+        marker.setMap(map);
+        return map;
+    }
+    initialize();
+    //var mapx = google.maps.event.addDomListener(window, 'load', initialize);
+
+
+</script>
 
 <script>
 
@@ -115,7 +163,9 @@ e
                     for(i=0;i<data.length;i++)
                     {
                         current = $("<div>");
-                        current.append("<h1>"+data[i].name+"</h1>");
+                        link2 = $("<a href='"+data[i].url+"'></a>")
+                        link2.append("<h1>"+data[i].name+"</h1>");
+                        current.append(link2)
                         members = $("<div>");
                         for (j=0;j<data[i].members.length;j++)
                         {

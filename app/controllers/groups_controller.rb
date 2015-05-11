@@ -80,16 +80,29 @@ class GroupsController < ApplicationController
   def searchstr
     # probably accessed by
     # str should be passed in get
+    @groups = Array.new
     @searchstr = params[:searchstr]
     str = @searchstr
     str.strip!
     str.downcase!
-    str_modified = "%" + str + "%"
-    @groups_str_in_desc = Group.where("LOWER(groups.desc) LIKE ? ",str_modified)
-    interestObj = Interest.where("LOWER(interests.interestname) LIKE ? ",str_modified)
-    @groups_str_in_interest = interestObj.group
-    #@groups_str_in_desc = Group.find_by_sql("select * from groups where groups.desc LIKE '%art%';")
-    @groups = @groups_str_in_desc + @groups_str_in_interest
+    str.split.each do |keyword|
+      logger.debug keyword
+      str_modified = "%" + keyword + "%"
+      @groups_str_in_desc = Group.where("LOWER(groups.desc) LIKE ? ",str_modified)
+      @interestObj = Interest.where("LOWER(interests.interestname) LIKE ? ",str_modified).first
+      #render plain: @interestObj.inspect
+
+      if @interestObj!=nil
+        @groups_str_in_interest = @interestObj.groups
+        if @groups_str_in_interest !=nil
+          @groups =  @groups + @groups_str_in_interest
+        end
+      end
+
+      if @groups_str_in_desc !=nil
+        @groups =  @groups + @groups_str_in_desc
+      end
+    end
   end
 
   # GET /groups/new
@@ -150,7 +163,7 @@ class GroupsController < ApplicationController
     params[:groupimages]['gimage'].each do |a|
       @groupimage = @group.groupimages.create!(:gimage => a, :group_id => @group.id)
     end
-    render plain:"uploaded"
+    redirect_to  @group
   end
 
   def newgroupimages
@@ -177,7 +190,7 @@ class GroupsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
 
     def group_params
-      params.require(:group).permit(:name, :lat, :log, :desc, :membertitle, :user_id, :interest)
+      params.require(:group).permit(:name, :lat, :log, :desc, :membertitle, :user_id, :interest, :groupavatar, :bgimage)
     end
 
     def groupphoto_params
