@@ -13,6 +13,9 @@
 <button onclick="loadDiscussions();" class="btn btn-default">
   Discussions
 </button >
+<button onclick="loadGroupImages();" class="btn btn-default">
+  Group Images
+</button >
 <div id="content">
 e
 </div>
@@ -128,6 +131,32 @@ e
         )
     }
 
+    function loadGroupImages()
+    {
+        $.get( "/groups/<%= @group.id %>/images.json",function (data){
+                    $("#content").html(" ");
+                    $("#content").append("<h1>Images</h1><br>")
+                    for(i=0;i<data.length;i++)
+                    {
+
+                        link = $("<a href='"+data[i].img+"'></a>")
+                        link.append(" <img src='"+data[i].thumb+"' with='70' height='70' > ")
+
+                        current = $("<div>");
+                        current.append(link)
+
+                        current.attr("class","well col-xs-2")
+
+                        $("#content").append(current)
+
+                    }
+
+
+                }
+                ,"json"
+        )
+    }
+
     function loadMembers()
     {
         $.get( "/groups/<%= @group.id %>/members.json",function (data){
@@ -217,27 +246,7 @@ e
         console.log(<%= session[:user_id] %>)
         $.post( "/groupreplies",{groupmessage_id : id ,body : comment, user_id : <%= session[:user_id] %> },function (data){
 
-
-
-                    $("#discussion-"+id).append('<hr>')
-
-                    for(i=0;i<data.length;i++)
-                    {
-
-                        current = $("<div>");
-
-                        current.attr("class","well")
-
-                        link2 = $("<a href='"+data[i].userurl+"'></a>")
-                        link2.append(" <img src='"+data[i].userimage+"' with='50' height='50' > ")
-                        link2.append("<h5>"+data[i].username+"</h5>")
-
-                        current.append(link2)
-                        current.append("<hr>")
-                        current.append("<h4>"+data[i].body+"</h4>")
-                        $("#discussion-"+id).append(current)
-                    }
-
+                    document.querySelector("#comment-"+id).value = "";
 
                 }
                 ,"json"

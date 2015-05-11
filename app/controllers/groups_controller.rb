@@ -36,6 +36,11 @@ class GroupsController < ApplicationController
     @users = @group.user
   end
 
+  def images
+    @group = Group.find(params[:id])
+    @images = @group.groupimages
+  end
+
   def memberjoin
     @group = Group.find(params[:id])
     @user = User.find(session[:user_id])
