@@ -1,7 +1,8 @@
+<script src="http://maps.googleapis.com/maps/api/js"></script>
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>Name:</strong>
+  <strong>Event Name:</strong>
   <%= @event.name %>
 </p>
 
@@ -15,6 +16,12 @@
   <%= @event.log %>
 </p>
 
+
+<div class="field" id="googleMap" style="height:380px;">
+
+</div>
+
+
 <p>
   <strong>Desc:</strong>
   <%= @event.desc %>
@@ -27,8 +34,49 @@
 
 <p>
   <strong>Group:</strong>
-  <%= @event.group %>
+  <%= @event.group.name %>
+</p>
+
+<p>
+  People who are going to this event:
+
+
+  <%   @users.each do |currentuser| %>
+      <span>
+            <a href="users/<%= currentuser.id%>"><%=current_user.username %> </a>
+
+            <img src="<%=currentuser.avatar.url(:thumb)%>"/>
+      </span>
+  <% end %>
+
+
+
 </p>
 
 <%= link_to 'Edit', edit_event_path(@event) %> |
 <%= link_to 'Back', events_path %>
+<script>
+    function initialize() {
+        var mylat = <%= @event.lat %>;
+        var mylng = <%= @event.log %>;
+        var mytitle = "<%= @event.name %>";
+        var xCenter=new google.maps.LatLng(mylat,mylng);
+        var mapProp = {
+            center:xCenter,
+            zoom:5,
+            mapTypeId:google.maps.MapTypeId.ROADMAP
+        };
+        var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+        var marker=new google.maps.Marker({
+            position: xCenter,
+            animation:google.maps.Animation.BOUNCE,
+            title: mytitle
+        });
+        marker.setMap(map);
+        return map;
+    }
+    initialize();
+    //var mapx = google.maps.event.addDomListener(window, 'load', initialize);
+
+</script>
+
