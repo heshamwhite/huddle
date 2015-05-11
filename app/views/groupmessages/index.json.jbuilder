@@ -3,5 +3,6 @@ json.array!(@groupmessages) do |groupmessage|
   json.username groupmessage.user.username
   json.userimage groupmessage.user.avatar.url(:thumb)
   json.userurl user_url(groupmessage.user)
+  json.number_of_replies groupmessage.groupreplies.count
   json.url groupmessage_url(groupmessage)
 end

@@ -18,6 +18,9 @@ Rails.application.routes.draw do
   #resources :groups
   resources :groups do
     member do
+
+      get :membership, :as => 'membership'
+      get :memberjoin, :as => 'memberjoin'
       get :searchneasrest, :as => 'searchneasrest'
       get :members, :as => 'members'
     end

@@ -102,6 +102,13 @@ ActiveRecord::Schema.define(version: 20150510192534) do
 
   add_index "groups", ["user_id"], name: "index_groups_on_user_id", using: :btree
 
+  create_table "groups_interests", id: false, force: :cascade do |t|
+    t.integer "group_id",    limit: 4
+    t.integer "interest_id", limit: 4
+  end
+
+  add_index "groups_interests", ["group_id", "interest_id"], name: "index_groups_interests_on_group_id_and_interest_id", using: :btree
+
   create_table "groups_users", force: :cascade do |t|
     t.integer "user_id",  limit: 4
     t.integer "group_id", limit: 4

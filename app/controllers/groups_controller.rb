@@ -36,6 +36,38 @@ class GroupsController < ApplicationController
     @users = @group.user
   end
 
+  def memberjoin
+    @group = Group.find(params[:id])
+    @user = User.find(session[:user_id])
+
+    @message = ""
+    if params[:intent] == "join"
+      unless @group.user.include?(@user)
+        @user.group << @group
+        @message = "joined the group"
+      else
+        @message = "already a member"
+      end
+    elsif params[:intent] == "leave"
+      if @group.user.include?(@user)
+        @group.user.delete(@user)
+        @message = "left the group"
+      else
+        @message = "only members can leave"
+      end
+
+    end
+    render json: {result: @message}
+  end
+
+  def membership
+    @group = Group.find(params[:id])
+    @user = User.find(session[:user_id])
+    @found = @group.user.include?(@user)
+    render json: {result: @found}
+
+  end
+
   def searchstr
     # probably accessed by
     # str should be passed in get

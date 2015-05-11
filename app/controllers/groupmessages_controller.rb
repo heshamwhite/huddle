@@ -15,6 +15,8 @@ class GroupmessagesController < ApplicationController
   # GET /groupmessages/new
   def new
     @groupmessage = Groupmessage.new
+    @gid = params[:group_id]
+
   end
 
   # GET /groupmessages/1/edit
@@ -25,6 +27,8 @@ class GroupmessagesController < ApplicationController
   # POST /groupmessages.json
   def create
     @groupmessage = Groupmessage.new(groupmessage_params)
+
+    #render plain: groupmessage_params.inspect
 
     respond_to do |format|
       if @groupmessage.save

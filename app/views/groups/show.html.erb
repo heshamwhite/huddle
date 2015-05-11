@@ -1,4 +1,8 @@
 <p id="notice"><%= notice %></p>
+<button onclick="join();" id="join-button" class="btn btn-success">
+  <span class="glyphicon glyphicon-plus"></span> Join
+</button >
+
 <button onclick="loadEvents();" class="btn btn-default">
     Events
 </button >
@@ -53,6 +57,50 @@ e
 <%= link_to 'Back', groups_path %>
 
 <script>
+
+    function join()
+    {
+
+        if ($("#join-button").attr("class") == "btn btn-success")
+        {
+
+            intention = "join"
+        }else
+        {
+
+            intention = "leave"
+        }
+
+        $.get( "/groups/<%= @group.id %>/memberjoin.json",{intent:intention},function (data){
+
+                alert(data.result)
+                    membership()
+                }
+                ,"json"
+        )
+    }
+
+    function membership()
+    {
+        $.get( "/groups/<%= @group.id %>/membership.json",function (data){
+
+                if (data.result == true)
+                {
+                    $("#join-button").attr("class","btn btn-danger")
+                    $("#join-button").html('<span class="glyphicon glyphicon-minus"></span> Leave')
+                }
+                else
+                {
+                    $("#join-button").attr("class","btn btn-success")
+                    $("#join-button").html('<span class="glyphicon glyphicon-plus"></span> Join')
+                }
+
+
+                }
+                ,"json"
+        )
+    }
+
     function loadEvents()
     {
         $.get( "/events.json",{group_id:<%= @group.id %>},function (data){
@@ -113,10 +161,15 @@ e
         $.get( "/groupmessages.json",{group_id:<%= @group.id %>},function (data){
                     $("#content").html(" ");
 
+
+                    $("#content").append('<br><a href="/groupmessages/new?group_id=<%= @group.id %>" class="btn btn-info">+ New Discussion</a><br><br>')
+
                     for(i=0;i<data.length;i++)
                     {   current = $("<div>");
                         current.attr("id","discussion-"+data[i].id)
                         current.attr("class","well")
+                        current.css("background", "white");
+                        current.css("border", "solid");
                         link = $("<a href='"+data[i].url+"'></a>")
 
                         link.append("<h1>"+data[i].title+"</h1>");
@@ -125,6 +178,8 @@ e
                         link2 = $("<a href='"+data[i].userurl+"'></a>")
                         link2.append(" <img src='"+data[i].userimage+"' with='50' height='50' > ")
                         current.append(link2);
+                        current.append('<button onclick="loadReplies(this,'+data[i].id+');" class="btn btn-info"> Replies <span class="badge">'+data[i].number_of_replies+'</span> </button >')
+                        current.append('<button onclick="Reply(this,'+data[i].id+');" class="btn btn-default" id="reply-'+data[i].id+'"> Reply </button >')
                         current.append("<hr>")
                         current.append("<p>"+data[i].body+"</p>");
 
@@ -138,4 +193,91 @@ e
                 ,"json"
         )
     }
+
+
+    function Reply(btn,id)
+    {
+
+        if (document.querySelector("#comment-"+id))
+        {
+            return ;
+        }
+
+        div = $('<div class="form-group"> <label for="comment">Comment:</label>  <textarea class="form-control" rows="5" id="comment-'+id+'"></textarea> </div>')
+        div.append('<button onclick="groupReply('+id+');" class="btn btn-default" > Post Comment </button >')
+        $("#reply-"+id).after(div)
+
+    }
+
+    function groupReply(id)
+    {
+        comment = document.querySelector("#comment-"+id).value;
+        console.log(id)
+        console.log(comment)
+        console.log(<%= session[:user_id] %>)
+        $.post( "/groupreplies",{groupmessage_id : id ,body : comment, user_id : <%= session[:user_id] %> },function (data){
+
+
+
+                    $("#discussion-"+id).append('<hr>')
+
+                    for(i=0;i<data.length;i++)
+                    {
+
+                        current = $("<div>");
+
+                        current.attr("class","well")
+
+                        link2 = $("<a href='"+data[i].userurl+"'></a>")
+                        link2.append(" <img src='"+data[i].userimage+"' with='50' height='50' > ")
+                        link2.append("<h5>"+data[i].username+"</h5>")
+
+                        current.append(link2)
+                        current.append("<hr>")
+                        current.append("<h4>"+data[i].body+"</h4>")
+                        $("#discussion-"+id).append(current)
+                    }
+
+
+                }
+                ,"json"
+        )
+    }
+
+
+    function loadReplies(btn,id)
+    {
+
+        $.get( "/groupreplies.json",{groupmessage_id:id},function (data){
+
+                    btn.disabled = true;
+
+                    $("#discussion-"+id).append('<hr>')
+
+                    for(i=0;i<data.length;i++)
+                    {
+
+                        current = $("<div>");
+
+                        current.attr("class","well")
+
+                        link2 = $("<a href='"+data[i].userurl+"'></a>")
+                        link2.append(" <img src='"+data[i].userimage+"' with='50' height='50' > ")
+                        link2.append("<h5>"+data[i].username+"</h5>")
+
+                        current.append(link2)
+                        current.append("<hr>")
+                        current.append("<h4>"+data[i].body+"</h4>")
+                        $("#discussion-"+id).append(current)
+                    }
+
+
+                }
+                ,"json"
+        )
+
+    }
+
+
+    membership()
 </script>
