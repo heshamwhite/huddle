@@ -6,6 +6,9 @@
 <button onclick="loadMembers();" class="btn btn-default">
   Members
 </button >
+<button onclick="loadDiscussions();" class="btn btn-default">
+  Discussions
+</button >
 <div id="content">
 e
 </div>
@@ -63,10 +66,11 @@ e
                         for (j=0;j<data[i].members.length;j++)
                         {
                             link = $("<a href='/users/"+data[i].members[j].id+"'></a>")
-                            link.append("<img src='"+data[i].members[j].avatar_file_name+"' with='50' height='50' >")
+                            link.append(" <img src='"+data[i].members[j].avatar_file_name+"' with='50' height='50' > ")
                             members.append(link)
                         }
                         current.append(members)
+                        current.attr("class","well")
                         $("#content").append(current)
                     }
 
@@ -85,13 +89,48 @@ e
                     {
 
                             link = $("<a href='/users/"+data[i].id+"'></a>")
-                            link.append("<img src='"+data[i].avatar_file_name+"' with='50' height='50' >")
+                            link.append(" <img src='"+data[i].avatar_file_name+"' with='50' height='50' > ")
                             link2 = $("<a href='/users/"+data[i].id+"'></a>")
                             link2.append("<h2>"+data[i].username+"</h2><br>")
+                        current = $("<div>");
+                        current.append(link)
+                        current.append(link2)
+                        current.attr("class","well")
+
+                        $("#content").append(current)
+
+                    }
 
 
-                        $("#content").append(link)
-                        $("#content").append(link2)
+                }
+                ,"json"
+        )
+    }
+
+
+    function loadDiscussions()
+    {
+        $.get( "/groupmessages.json",{group_id:<%= @group.id %>},function (data){
+                    $("#content").html(" ");
+
+                    for(i=0;i<data.length;i++)
+                    {   current = $("<div>");
+                        current.attr("id","discussion-"+data[i].id)
+                        current.attr("class","well")
+                        link = $("<a href='"+data[i].url+"'></a>")
+
+                        link.append("<h1>"+data[i].title+"</h1>");
+                        current.append(link);
+
+                        link2 = $("<a href='"+data[i].userurl+"'></a>")
+                        link2.append(" <img src='"+data[i].userimage+"' with='50' height='50' > ")
+                        current.append(link2);
+                        current.append("<hr>")
+                        current.append("<p>"+data[i].body+"</p>");
+
+
+
+                        $("#content").append(current)
                     }
 
 
