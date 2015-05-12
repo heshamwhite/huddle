@@ -6,6 +6,12 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
+    if ( session[:user_usertype] == 1  or  params[:id].to_i == session[:user_id].to_i )
+      x=1
+    else
+      render plain: "unauthorized access "
+      return
+    end
     @users = User.all
   end
 
@@ -28,15 +34,36 @@ class UsersController < ApplicationController
   # GET /users/new
   def new
     @user = User.new
+
+    if ( session[:user_usertype] == 1   )
+      x=1
+    else
+      render plain: "unauthorized access "
+      return
+    end
   end
 
   # GET /users/1/edit
   def edit
+    if ( session[:user_usertype] == 1  or  params[:id].to_i == session[:user_id].to_i )
+      x=1
+    else
+      render plain: "unauthorized access "
+      return
+    end
   end
 
   # POST /users
   # POST /users.json
   def create
+
+    if ( session[:user_usertype] == 1   )
+      x=1
+    else
+      render plain: "unauthorized access "
+      return
+    end
+
     # @user.interest_id=@user.id
 
     @user = User.new(user_params)
@@ -67,6 +94,14 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
+
+    if ( session[:user_usertype] == 1  or  params[:id].to_i == session[:user_id].to_i )
+      x=1
+    else
+      render plain: "unauthorized access "
+      return
+    end
+
     respond_to do |format|
       if @user.update(user_params)
         format.html { redirect_to @user, notice: 'User was successfully updated.' }
@@ -95,6 +130,13 @@ class UsersController < ApplicationController
   end
 
   def editprofile
+    if ( session[:user_usertype] == 1  or  params[:id].to_i == session[:user_id].to_i )
+      x=1
+    else
+      render plain: "unauthorized access "
+      return
+    end
+
     @user = User.find(session[:user_id])
     @a=[]
 
@@ -107,6 +149,14 @@ class UsersController < ApplicationController
 
   end
   def updateprofile
+
+    if ( session[:user_usertype] == 1  or  params[:id].to_i == session[:user_id].to_i )
+      x=1
+    else
+      render plain: "unauthorized access "
+      return
+    end
+
     @user = User.find(session[:user_id])
 
     editprofiledata = updateprofile_params
@@ -132,6 +182,14 @@ class UsersController < ApplicationController
   # DELETE /users/1
   # DELETE /users/1.json
   def destroy
+
+    if ( session[:user_usertype] == 1  or  params[:id].to_i == session[:user_id].to_i )
+      x=1
+    else
+      render plain: "unauthorized access "
+      return
+    end
+
     @user.destroy
     respond_to do |format|
       format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }

@@ -9,7 +9,7 @@
 <button onclick="join();" id="join-button" class="btn btn-success">
   <span class="glyphicon glyphicon-plus"></span> Join
 </button >
-<% if @ismember %>
+<% if @organizer %>
     <%= link_to 'New Event + ', new_event_path(:group => @group) , {:class => 'btn btn-default'} %>
 <% end %>
 <button onclick="loadEvents();" class="btn btn-default">
