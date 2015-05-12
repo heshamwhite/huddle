@@ -10,9 +10,41 @@ class EventsController < ApplicationController
   # GET /events/1
   # GET /events/1.json
   def show
+    @events = Event.find(params[:id])
+    @users = @events.users
   end
 
+  def memberjoin
+    @event = Event.find(params[:id])
+    @user = User.find(session[:user_id])
 
+    @message = ""
+    if params[:intent] == "join"
+      unless @event.users.include?(@user)
+        @user.events << @event
+        @message = "joined the event"
+      else
+        @message = "already a member"
+      end
+    elsif params[:intent] == "leave"
+      if @event.users.include?(@user)
+        @event.users.delete(@user)
+        @message = "left the event"
+      else
+        @message = "only members can leave"
+      end
+
+    end
+    render json: {result: @message}
+  end
+
+  def membership
+    @event = Event.find(params[:id])
+    @user = User.find(session[:user_id])
+    @found = @event.users.include?(@user)
+    render json: {result: @found}
+
+  end
 
   # GET /events/new
   def new

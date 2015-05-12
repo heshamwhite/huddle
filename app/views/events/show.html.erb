@@ -1,3 +1,10 @@
+<p id="notice"><%= notice %></p>
+
+<button onclick="join();" id="join-button" class="btn btn-success">
+  <span class="glyphicon glyphicon-plus"></span> Join
+</button >
+
+
 <script src="http://maps.googleapis.com/maps/api/js"></script>
 <p id="notice"><%= notice %></p>
 
@@ -43,9 +50,10 @@
 
   <%   @users.each do |currentuser| %>
       <span>
-            <a href="users/<%= currentuser.id%>"><%=current_user.username %> </a>
 
-            <img src="<%=currentuser.avatar.url(:thumb)%>"/>
+        <a href="/users/<%= currentuser.id%>">
+        <img src="<%=currentuser.avatar.url(:thumb)%>"/>
+        </a>
       </span>
   <% end %>
 
@@ -80,3 +88,40 @@
 
 </script>
 
+
+<script>
+    function join()
+    {
+        if ($("#join-button").attr("class") == "btn btn-success")
+        {
+            intention = "join"
+        }else
+        {
+            intention = "leave"
+        }
+        $.get( "/events/<%= @event.id %>/memberjoin.json",{intent:intention},function (data){
+                    alert(data.result)
+                    membership()
+                }
+                ,"json"
+        )
+    }
+    function membership()
+    {
+        $.get( "/events/<%= @event.id %>/membership.json",function (data){
+                    if (data.result == true)
+                    {
+                        $("#join-button").attr("class","btn btn-danger")
+                        $("#join-button").html('<span class="glyphicon glyphicon-minus"></span> Leave')
+                    }
+                    else
+                    {
+                        $("#join-button").attr("class","btn btn-success")
+                        $("#join-button").html('<span class="glyphicon glyphicon-plus"></span> Join')
+                    }
+                }
+                ,"json"
+        )
+    }
+    membership()
+</script>

@@ -45,6 +45,18 @@
   <%= image_tag @user.avatar.url %>
 </p>
 
+<div id="userinfo">
+
+</div>
+<p>
+<div class="row">
+  <div class="field col-xs-12" id="googleMap" style="width:90%;height:380px;margin: 40px;  border-style: solid; border-width: 1px; ">
+
+  </div>
+</div>
+
+</p>
+
 
 
 
@@ -84,3 +96,61 @@
 
 <%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', users_path %>
+
+
+<script>
+    function initialize() {
+        var mylat = <%= @user.latitude %>;
+        var mylng = <%= @user.longitude %>;
+        var mytitle = "<%= @user.username %>";
+        var xCenter=new google.maps.LatLng(mylat,mylng);
+        var mapProp = {
+            center:xCenter,
+            zoom:5,
+            mapTypeId:google.maps.MapTypeId.ROADMAP
+        };
+        var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+        var marker=new google.maps.Marker({
+            position: xCenter,
+            animation:google.maps.Animation.DROP,
+            title: mytitle
+        });
+        marker.setMap(map);
+        return map;
+    }
+    initialize();
+    googleurl = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + <%= @group.lat%> + "," + <%= @group.log%>+ "&sensor=true";
+    //var mapx = google.maps.event.addDomListener(window, 'load', initialize);
+    $.ajax({
+        url: googleurl,
+        beforeSend: function( xhr ) {
+            //xhr.overrideMimeType( "text/plain; charset=x-user-defined" );
+        }
+    })
+            .done(function( data ) {
+                if ( console && console.log ) {
+                    //console.log( "Sample of data:", data );
+                    addressComponents = data.results[0].address_components;
+
+                    addressstatus = data.status;
+
+                    if (addressstatus == "OK" ){
+                        for(i=0 ; i<addressComponents.length ; i++){
+                            console.log(addressComponents[i].types[0]);
+                            console.log(addressComponents[i].long_name);
+
+                            addComp = "<b>" + addressComponents[i].types[0] + ": </b>" + addressComponents[i].long_name + " <br/>" ;
+                            //"<b>:" + addressComponents[i].types[0] + "</b>" + addressComponents[i].long_name + "<br/>" ;
+                            current = $("<p>");
+                            current.append(addComp)
+
+                            $("#userinfo").append(current)
+
+
+                        }
+                    }
+                    console.log("result:" + data.results);
+                }
+            });
+
+</script>

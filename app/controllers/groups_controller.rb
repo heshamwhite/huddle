@@ -10,6 +10,7 @@ class GroupsController < ApplicationController
   # GET /groups/1
   # GET /groups/1.json
   def show
+    @organizer = User.find(@group.user_id)
     @a=[]
 
     groupsinterest= GroupsInterest.where(group_id: @group.id)
