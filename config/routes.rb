@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   get 'groups/searchnearest'
   get 'groups/searchstr'
 
-  get 'users/ :id/ :mystring', to: 'users#confirm'
+  get 'users/ :id/', to: 'users#confirm'
 # get 'auth/:provider/callback', to: 'sessions#create'
 #   get 'auth/failure', to: redirect('/')
 #   get 'signout', to: 'sessions#destroy', as: 'signout'
@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   get "notifications/getusernotification" => "notifications#getusernotification"
   get "users/profilepage" => "users#profilepage"
   get "users/editprofile" => "users#editprofile"
+  get "users/confirm" => "users#confirm"
   patch "users/updateprofile" => "users#updateprofile"
   root :to => "welcome#index"
   resources :notifications

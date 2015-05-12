@@ -11,15 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150511154632) do
-
-  create_table "authorizations", force: :cascade do |t|
-    t.string   "provider",   limit: 255
-    t.string   "uid",        limit: 255
-    t.integer  "user_id",    limit: 4
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-  end
+ActiveRecord::Schema.define(version: 20150512073532) do
 
   create_table "confirms", force: :cascade do |t|
     t.text     "confirmtext", limit: 65535
@@ -29,9 +21,6 @@ ActiveRecord::Schema.define(version: 20150511154632) do
   end
 
   add_index "confirms", ["user_id"], name: "index_confirms_on_user_id", using: :btree
-
-ActiveRecord::Schema.define(version: 20150511062730) do
-
 
   create_table "eventcomments", force: :cascade do |t|
     t.text     "body",       limit: 65535
@@ -172,9 +161,6 @@ ActiveRecord::Schema.define(version: 20150511062730) do
     t.boolean  "seen",        limit: 1
   end
 
-  add_index "usermessages", ["receiver_id"], name: "receiver_id", using: :btree
-  add_index "usermessages", ["sender_id"], name: "sender_id", using: :btree
-
   create_table "users", force: :cascade do |t|
     t.string   "username",            limit: 255
     t.string   "hashedpassword",      limit: 255
@@ -213,7 +199,5 @@ ActiveRecord::Schema.define(version: 20150511062730) do
   add_foreign_key "groupreplies", "users"
   add_foreign_key "groups", "users"
   add_foreign_key "notifications", "users"
-  add_foreign_key "usermessages", "users", column: "receiver_id", name: "receiver_constraint_1"
-  add_foreign_key "usermessages", "users", column: "sender_id", name: "sender_constraint_1"
   add_foreign_key "users", "interests"
 end

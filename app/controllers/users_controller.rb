@@ -5,7 +5,6 @@ class UsersController < ApplicationController
 
 
 
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
 
   # GET /users
   # GET /users.json
@@ -48,19 +47,18 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     # @user.interest_id=@user.id
+    mytestparams = user_params
+    mytestparams[:interest_id] = 1
+    mytestparams[:isconfirm] = 0
 
     @user = User.new(user_params)
 
    
     respond_to do |format|
       if @user.save
-<<<<<<< HEAD
+
         UserMailer.welcome_email(@user).deliver_later
 
-        @user.update(interest_id: @user.id)
-=======
-        #@user.update(interest_id: @user.id)
->>>>>>> 566f33511dc09246a2965b7b93a29a9028430043
         @user.interest.split(',').each do|c| 
           if c.to_s.strip.length != 0
         @interest=Interest.find_or_create_by(interestname: c)
@@ -70,6 +68,7 @@ class UsersController < ApplicationController
         @interest_users= Interests_User.new(user_id:@user.id, interest_id:@interest.id)   
         @interest_users.save
         end
+
          end 
         format.html { redirect_to @user, notice: 'User was successfully created.' }
         format.json { render :show, status: :created, location: @user }
@@ -99,15 +98,20 @@ class UsersController < ApplicationController
 
   end
   end
-  def confirm
-            @myconfirm = Confirm.where(user_id: @user.id)
 
-<<<<<<< HEAD
-          # @myurlconfirm = Confirm.find(params[:mystring])
-if @myconfirm.confirmtext == params[:mystring]
-        @user.update(isconfirm: 1)
+  def confirm
+      if current_user
+            confirmkey = params[:confkey]
+            @user = User.find(session[:user_id])
+            @myconfirm = Confirm.where(user_id: session[:user_id]).first
+            if @myconfirm.confirmtext == confirmkey
+              @user.update(isconfirm: 1)
+            end
+        redirect_to :controller =>'welcome', :action=> 'index'
+      else
+        redirect_to :controller=> 'log_in'
       end
-=======
+
   def profilepage
     #render plain:session.inspect
     @user = User.find(session[:user_id])
@@ -158,7 +162,7 @@ if @myconfirm.confirmtext == params[:mystring]
       end
     end
     render :controller => 'users', :action => 'profilepage'
->>>>>>> 566f33511dc09246a2965b7b93a29a9028430043
+
   end
   # DELETE /users/1
   # DELETE /users/1.json
@@ -170,6 +174,7 @@ if @myconfirm.confirmtext == params[:mystring]
       format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
   else
       redirect_to  :controller =>'welcome', :action=> 'index', :notice => "Acess Denyed!"
 
