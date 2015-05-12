@@ -11,7 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150511062730) do
+ActiveRecord::Schema.define(version: 20150512073532) do
+
+  create_table "confirms", force: :cascade do |t|
+    t.text     "confirmtext", limit: 65535
+    t.integer  "user_id",     limit: 4
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  add_index "confirms", ["user_id"], name: "index_confirms_on_user_id", using: :btree
 
   create_table "eventcomments", force: :cascade do |t|
     t.text     "body",       limit: 65535
@@ -42,6 +51,7 @@ ActiveRecord::Schema.define(version: 20150511062730) do
     t.integer "event_id", limit: 4
   end
 
+  add_index "events_users", ["event_id"], name: "event_id", using: :btree
   add_index "events_users", ["user_id", "event_id"], name: "index_events_users_on_user_id_and_event_id", using: :btree
 
   create_table "groupimages", force: :cascade do |t|
@@ -82,8 +92,8 @@ ActiveRecord::Schema.define(version: 20150511062730) do
 
   create_table "groups", force: :cascade do |t|
     t.string   "name",                     limit: 255
-    t.float    "lat",                      limit: 53
-    t.float    "log",                      limit: 53
+    t.float    "lat",                      limit: 24
+    t.float    "log",                      limit: 24
     t.text     "desc",                     limit: 65535
     t.string   "membertitle",              limit: 255
     t.integer  "user_id",                  limit: 4
@@ -152,9 +162,6 @@ ActiveRecord::Schema.define(version: 20150511062730) do
     t.boolean  "seen",        limit: 1
   end
 
-  add_index "usermessages", ["receiver_id"], name: "receiver_id", using: :btree
-  add_index "usermessages", ["sender_id"], name: "sender_id", using: :btree
-
   create_table "users", force: :cascade do |t|
     t.string   "username",            limit: 255
     t.string   "hashedpassword",      limit: 255
@@ -173,13 +180,20 @@ ActiveRecord::Schema.define(version: 20150511062730) do
     t.string   "password_salt",       limit: 255
     t.float    "latitude",            limit: 24
     t.float    "longitude",           limit: 24
+    t.string   "provider",            limit: 255
+    t.string   "uid",                 limit: 255
+    t.string   "name",                limit: 255
+    t.string   "oauth_token",         limit: 255
+    t.datetime "oauth_expires_at"
   end
 
   add_index "users", ["interest_id"], name: "index_users_on_interest_id", using: :btree
 
+  add_foreign_key "confirms", "users"
   add_foreign_key "eventcomments", "events"
   add_foreign_key "eventcomments", "users"
   add_foreign_key "events", "groups"
+  add_foreign_key "events_users", "events", name: "events_users_ibfk_1"
   add_foreign_key "groupimages", "groups"
   add_foreign_key "groupmessages", "groups"
   add_foreign_key "groupmessages", "users"
@@ -187,7 +201,5 @@ ActiveRecord::Schema.define(version: 20150511062730) do
   add_foreign_key "groupreplies", "users"
   add_foreign_key "groups", "users"
   add_foreign_key "notifications", "users"
-  add_foreign_key "usermessages", "users", column: "receiver_id", name: "receiver_constraint_1"
-  add_foreign_key "usermessages", "users", column: "sender_id", name: "sender_constraint_1"
   add_foreign_key "users", "interests"
 end

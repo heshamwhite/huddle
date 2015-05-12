@@ -1,9 +1,15 @@
 Rails.application.routes.draw do
-
+  get "users/profilepage" => "users#profilepage"
+  get "users/editprofile" => "users#editprofile"
   resources :groupreplies
   get 'groups/searchnearest'
   get 'groups/searchstr'
 
+  get 'users/ :id/', to: 'users#confirm'
+# get 'auth/:provider/callback', to: 'sessions#create'
+#   get 'auth/failure', to: redirect('/')
+#   get 'signout', to: 'sessions#destroy', as: 'signout'
+  
   get 'sessions/new'
   get "log_in" => "sessions#new", :as => "log_in"
   get "log_out" => "sessions#destroy", :as => "log_out"
@@ -15,8 +21,8 @@ Rails.application.routes.draw do
   patch "groups/uploadgroupimages/:id" => "groups#uploadgroupimages", :as => "groups/uploadgroupimages"
   get "groups/newgroupimages/:id" => "groups#newgroupimages"
   get "notifications/getusernotification" => "notifications#getusernotification"
-  get "users/profilepage" => "users#profilepage"
-  get "users/editprofile" => "users#editprofile"
+
+  get "users/confirm" => "users#confirm"
   patch "users/updateprofile" => "users#updateprofile"
   root :to => "welcome#index"
   resources :notifications

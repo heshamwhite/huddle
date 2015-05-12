@@ -4,6 +4,8 @@ class GroupsController < ApplicationController
   # GET /groups
   # GET /groups.json
   def index
+
+
     @groups = Group.all
   end
 
@@ -12,6 +14,9 @@ class GroupsController < ApplicationController
   def show
     @organizer = User.find(@group.user_id)
     @a=[]
+
+
+    @organizer = (@group.user_id.to_i == session[:user_id].to_i )? true :false ;
 
     groupsinterest= GroupsInterest.where(group_id: @group.id)
 
@@ -79,6 +84,9 @@ class GroupsController < ApplicationController
   end
 
   def searchstr
+
+
+
     # probably accessed by
     # str should be passed in get
     @groups = Array.new
@@ -109,10 +117,18 @@ class GroupsController < ApplicationController
   # GET /groups/new
   def new
     @group = Group.new
+
   end
 
   # GET /groups/1/edit
   def edit
+    if ( session[:user_usertype] == 1  or  @group.user_id.to_i == session[:user_id].to_i )
+      x=1
+    else
+      render plain: "unauthorized access "
+      return
+    end
+
   end
 
   # POST /groups
@@ -148,6 +164,16 @@ class GroupsController < ApplicationController
   # PATCH/PUT /groups/1
   # PATCH/PUT /groups/1.json
   def update
+
+
+    if ( session[:user_usertype] == 1  or  @group.user_id.to_i == session[:user_id].to_i )
+      x=1
+    else
+      render plain: "unauthorized access "
+      return
+    end
+
+
     respond_to do |format|
       if @group.update(group_params)
         format.html { redirect_to @group, notice: 'Group was successfully updated.' }
@@ -174,6 +200,14 @@ class GroupsController < ApplicationController
   # DELETE /groups/1
   # DELETE /groups/1.json
   def destroy
+
+    if ( session[:user_usertype] == 1  or  @group.user_id.to_i == session[:user_id].to_i )
+      x=1
+    else
+      render plain: "unauthorized access "
+      return
+    end
+
     @group.destroy
     respond_to do |format|
       format.html { redirect_to groups_url, notice: 'Group was successfully destroyed.' }
