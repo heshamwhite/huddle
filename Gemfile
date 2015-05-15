@@ -1,6 +1,12 @@
 source 'https://rubygems.org'
 
-
+group :development do
+  gem 'sqlite3'
+end
+group :production do
+  gem 'pg'
+  gem 'rails_12factor'
+end
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.1'
 # Use mysql as the database for Active Record
@@ -63,7 +69,7 @@ group :development, :test do
 
   gem 'bcrypt', '~> 3.1.2'
 
-  gem "mysql"
+  #gem "mysql"
 gem 'omniauth'
 
   gem 'geokit-rails'

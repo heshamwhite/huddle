@@ -1,5 +1,5 @@
 <script src="http://maps.googleapis.com/maps/api/js"></script>
-<%= @organizer.inspect %>
+
 <script>
   document.getElementsByTagName("body")[0].setAttribute("background","<%= @group.bgimage.url %>")
         console.log( document.getElementsByTagName("body")[0].getAttribute("background"))
@@ -9,7 +9,7 @@
 <button onclick="join();" id="join-button" class="btn btn-success">
   <span class="glyphicon glyphicon-plus"></span> Join
 </button >
-<% if @organizer %>
+<% if @organizerChk %>
     <%= link_to 'New Event + ', new_event_path(:group => @group) , {:class => 'btn btn-default'} %>
 <% end %>
 <button onclick="loadEvents();" class="btn btn-default">

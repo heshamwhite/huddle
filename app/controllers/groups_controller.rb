@@ -12,11 +12,12 @@ class GroupsController < ApplicationController
   # GET /groups/1
   # GET /groups/1.json
   def show
-    @organizer = User.find(@group.user_id)
+    @username_id =@group.user_id
+    @organizer = User.find(@username_id)
     @a=[]
 
 
-    @organizer = (@group.user_id.to_i == session[:user_id].to_i )? true :false ;
+    @organizerChk = (@group.user_id.to_i == session[:user_id].to_i )? true :false ;
 
     groupsinterest= GroupsInterest.where(group_id: @group.id)
 

@@ -1,0 +1,25 @@
+default: &default
+  adapter: mysql2
+  encoding: utf8
+  pool: 5
+  username: <your username>
+  password: <your password>
+  socket: /var/run/mysqld/mysqld.sock
+
+development:
+  <<: *default
+  database: <databaseName>_development
+
+test:
+  <<: *default
+  database: <databaseName>_test
+
+production:
+  <<: *default
+  adapter: mysql2
+  database: "<%=ENV['OPENSHIFT_APP_NAME']%>"
+  username: "<%=ENV['OPENSHIFT_MYSQL_DB_USERNAME']%>" 
+  password: "<%=ENV['OPENSHIFT_MYSQL_DB_PASSWORD']%>" 
+  host: <%=ENV['OPENSHIFT_MYSQL_DB_HOST']%> 
+  port: <%=ENV['OPENSHIFT_MYSQL_DB_PORT']%> 
+  socket: <%=ENV['OPENSHIFT_MYSQL_DB_SOCKET']%>
