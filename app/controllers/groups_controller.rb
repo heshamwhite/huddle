@@ -35,11 +35,31 @@ class GroupsController < ApplicationController
   def searchnearest
     # 10 is the distance in kilometers , should be passed in get
     # origin is the lat and lng , will be retrieved from user session info
+
     @distance = params[:distance]
-    currentlat = params[:search_lat]
-    currentlng = params[:search_lng]
-    #render plain: "OK"+@distance.to_s
-    @groups = Group.within( @distance, :origin => [currentlat	,currentlng])
+    @orig_lat = params[:search_lat]
+    @orig_lon = params[:search_lng]
+    # #render plain: "OK"+@distance.to_s
+    # @groups = Group.within( @distance, :origin => [currentlat	,currentlng])
+#    @groups = Group.find_by_sql("SELECT *, 3956 * 2 * ASIN(SQRT( POWER(SIN((@orig_lat -abs( groups.lat)) * pi()/180 / 2),2) + COS(@orig_lat * pi()/180 ) * COS( abs(groups.lat) *  pi()/180) * POWER(SIN((@orig_lon – groups.lon) *  pi()/180 / 2), 2) )) as distance FROM groups having distance < @dist ORDER BY distance;")
+
+    # set lon1 = mylon-dist/abs(cos(radians(mylat))*69);
+    # lon1 =
+    #
+    # set lon2 = mylon+dist/abs(cos(radians(mylat))*69);set lat1 = mylat-(dist/69);set lat2 = mylat+(dist/69);
+    #
+    #
+    # @groups = Group.find_by_sql("SELECT groups.*,
+    #   3956 * 2 * ASIN(SQRT( POWER(SIN((#{@orig_lat} - groups.lat) *  pi()/180 / 2), 2) +COS(#{@orig_lat} * pi()/180) * COS(groups.lat * pi()/180) * POWER(SIN((#{@orig_lon} -groups.lon) * pi()/180 / 2), 2) ))
+    #   as distance FROM groups WHERE origin.id=userid
+    #   and destination.longitude between lon1 and lon2 and destination.latitude between lat1 and lat2")
+
+    @groups = Group.find_by_sql("
+        SELECT groups.*, SQRT(
+        POW(69.1 * (groups.lat - #{@orig_lat}), 2) +
+        POW(69.1 * (#{ @orig_lon} - groups.log) * COS(groups.lat / 57.3), 2)) AS distance
+        FROM groups HAVING distance < #{@distance} ORDER BY distance;")
+    #render plain: "OK"+@groups.inspect
   end
 
   def members
